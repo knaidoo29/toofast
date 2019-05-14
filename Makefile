@@ -4,12 +4,12 @@ CFLAGS = -c
 INC =
 LIBS =
 
-OBJS = src/progress.o
+OBJS = src/progress.o src/read.o src/write.o
 
 all: lib/libtoofast.a
 
 lib/libtoofast.a: $(OBJS)
-	 ar cr lib/libfast.a $(OBJS)
+	 ar cr lib/libtoofast.a $(OBJS)
 
 .cpp.o:
 	 $(CC) $(CFLAGS) $(INC) $< $(LIBS) -o $@
