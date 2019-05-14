@@ -6,7 +6,7 @@
 
 using namespace std;
 
-// test read ascii table
+// test write ascii table
 
 int main(){
 
