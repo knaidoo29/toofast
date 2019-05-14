@@ -43,4 +43,5 @@ int main(){
   wr.store(z, column_length, "z");
   wr.write2file(filename2);
 
+  return 0;
 }

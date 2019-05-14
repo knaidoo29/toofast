@@ -47,5 +47,5 @@ class progress{
     int length;
     char s1, s2, s3, s4;
     void print_line(char symbol);
-    void print_title(string title, char symbol);
+    void print_title(string title, char symbo, int level);
 };

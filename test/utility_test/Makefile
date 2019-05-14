@@ -9,7 +9,7 @@ INC = $(TOOFAST_INC)
 LIBS = -lm $(TOOFAST_LIB)
 CFLAGS = $(OPTIMIZE)
 
-OBJS = test1.o test2.o test3.o
+OBJS = test1.o test2.o test3.o test4.o
 
 all: $(OBJS)
 

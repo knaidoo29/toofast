@@ -14,21 +14,36 @@ void progress::print_line(char symbol){
   }
 }
 
-void progress::print_title(string title, char symbol){
+void progress::print_title(string title, char symbol, int level){
   int title_length = title.length();
   if(title_length%2 != 0){
     title += " ";
   }
   for(int i = 0; i < length - title.length()/2 - 1; i++){
-    cout << symbol;
+    if(i < 4*(level - 1)){
+      cout << " ";
+    }
+    else{
+      cout << symbol;
+    }
   }
   cout << " " << title << " ";
   for(int i = 0; i < length - title.length()/2 - 1; i++){
     if(i+1 == length - title.length()/2 - 1){
-      cout << symbol << endl;
+      if(i+1 < length - title.length()/2 - 1 - 4*(level - 1)){
+        cout << symbol << endl;
+      }
+      else{
+        cout << " " << endl;
+      }
     }
     else{
-      cout << symbol;
+      if(i+1 < length - title.length()/2 - 1 - 4*(level - 1)){
+        cout << symbol;
+      }
+      else{
+        cout << " ";
+      }
     }
   }
 }
@@ -36,7 +51,7 @@ void progress::print_title(string title, char symbol){
 void progress::start(string title){
   cout << "\n";
   progress::print_line('=');
-  progress::print_title(title, '#');
+  progress::print_title(title, '#', 1);
   progress::print_line('-');
   cout << "\n";
 }
@@ -45,7 +60,7 @@ void progress::end(){
   string end_title = "DONE";
   cout << "\n";
   progress::print_line('-');
-  progress::print_title(end_title, '#');
+  progress::print_title(end_title, '#', 1);
   progress::print_line('=');
   cout << "\n";
 }
@@ -70,7 +85,7 @@ void progress::start_process(string process_name, int level){
       break;
   }
   cout << "\n";
-  progress::print_title(process_name, symbol);
+  progress::print_title(process_name, symbol, level);
   cout << "\n";
 }
 
@@ -95,6 +110,6 @@ void progress::end_process(int level){
       break;
   }
   cout << "\n";
-  progress::print_title(end_process, symbol);
+  progress::print_title(end_process, symbol, level);
   cout << "\n";
 }
