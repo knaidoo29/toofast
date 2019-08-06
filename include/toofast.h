@@ -7,5 +7,8 @@
 // read function
 #include "read.h"
 
+// two point function
+#include "two_point.h"
+
 // write function
 #include "write.h"

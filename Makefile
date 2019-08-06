@@ -4,7 +4,7 @@ CFLAGS = -c
 INC =
 LIBS =
 
-OBJS = src/progress.o src/read.o src/write.o
+OBJS = src/progress.o src/read.o src/two_point.o src/write.o
 
 all: lib/libtoofast.a
 
