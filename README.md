@@ -1,4 +1,4 @@
-# TooFast
+# TwoFast
 
 Two and three point correlation function estimator in c++.
 
