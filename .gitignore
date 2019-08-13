@@ -5,6 +5,7 @@ lib/*.a*
 
 scripts/input/*
 scripts/output/*
+scripts/*.o
 
 test/*
 test/two_point_mpi/*.txt
