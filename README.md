@@ -25,7 +25,7 @@ Non-parallel version:
 
 Parallel version:
 
-``/Users/krishna/Programs/build/openmpi/bin/mpirun -n 4 ./script_two_t_3d_omp.o paramfile_two_point_3d_5000.ini``
+``/path/to/mpirun -n 4 ./script_two_point_3d_omp.o paramfile_two_point_3d_5000.ini``
 
 ## What can it do?
 
