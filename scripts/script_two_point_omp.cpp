@@ -24,7 +24,7 @@ int main(int argc, char** argv){
   progress prog;
 
   if(myid == 0){
-    prog.start("TwoFast: 2-Point 3D");
+    prog.start("TwoFast: 2-Point");
   }
 
   // READING PARAMFILE --------------------------------------------------------------- //
@@ -168,11 +168,21 @@ int main(int argc, char** argv){
   vector<float>x_data;
   vector<float>y_data;
   vector<float>z_data;
+  vector<float>phi_data;
+  vector<float>theta_data;
 
   if(data_file_found == true){
-    extract_from_table(pos_data, 0, row_length, x_data);
-    extract_from_table(pos_data, 1, row_length, y_data);
-    extract_from_table(pos_data, 2, row_length, z_data);
+    if(mode == "2d" || mode == "3d"){
+      extract_from_table(pos_data, 0, row_length, x_data);
+      extract_from_table(pos_data, 1, row_length, y_data);
+      if(mode == "3d"){
+        extract_from_table(pos_data, 2, row_length, z_data);
+      }
+    }
+    else if(mode == "tomo"){
+      extract_from_table(pos_data, 0, row_length, phi_data);
+      extract_from_table(pos_data, 1, row_length, theta_data);
+    }
   }
 
   if((data_file_found == true) && (calc_DD == "yes")){
@@ -195,11 +205,21 @@ int main(int argc, char** argv){
   vector<float>x_rand;
   vector<float>y_rand;
   vector<float>z_rand;
+  vector<float>phi_rand;
+  vector<float>theta_rand;
 
   if(data_file_found == true){
-    extract_from_table(pos_rand, 0, row_length, x_rand);
-    extract_from_table(pos_rand, 1, row_length, y_rand);
-    extract_from_table(pos_rand, 2, row_length, z_rand);
+    if(mode == "2d" || mode == "3d"){
+      extract_from_table(pos_rand, 0, row_length, x_rand);
+      extract_from_table(pos_rand, 1, row_length, y_rand);
+      if(mode == "3d"){
+        extract_from_table(pos_rand, 2, row_length, z_rand);
+      }
+    }
+    else if(mode == "tomo"){
+      extract_from_table(pos_rand, 0, row_length, phi_rand);
+      extract_from_table(pos_rand, 1, row_length, theta_rand);
+    }
   }
 
   if((rand_file_found == true) && ((calc_DR == "yes") || (calc_RR == "yes"))){
@@ -223,8 +243,13 @@ int main(int argc, char** argv){
   }
 
   long int total_size, partition_begin_dd, partition_end_dd;
-
-  total_size = x_data.size()*(x_data.size()-1)/2;
+  
+  if(mode == "2d" || mode == "3d"){
+    total_size = x_data.size()*(x_data.size()-1)/2;
+  }
+  else if(mode == "tomo"){
+    total_size = phi_data.size()*(phi_data.size()-1)/2;
+  }
 
   partition(total_size, processors, &myid, &partition_begin_dd, &partition_end_dd);
 
@@ -244,8 +269,18 @@ int main(int argc, char** argv){
   partition_end_dd = partition_end_dd - 1;
 
   if(calc_DD == "yes"){
-    if(mode == "3d"){
+    if(mode == "2d"){
+      get_mpi_dd_2d(dd, minimum, maximum, numbins, uselog, x_data, y_data,
+        &partition_begin_dd, &partition_end_dd, &part_begin_dd_i, &part_begin_dd_j,
+        &part_end_dd_i, &part_end_dd_j, &prefix);
+    }
+    else if(mode == "3d"){
       get_mpi_dd_3d(dd, minimum, maximum, numbins, uselog, x_data, y_data, z_data,
+        &partition_begin_dd, &partition_end_dd, &part_begin_dd_i, &part_begin_dd_j,
+        &part_end_dd_i, &part_end_dd_j, &prefix);
+    }
+    else if(mode == "tomo"){
+      get_mpi_dd_tomo(dd, minimum, maximum, numbins, uselog, phi_data, theta_data,
         &partition_begin_dd, &partition_end_dd, &part_begin_dd_i, &part_begin_dd_j,
         &part_end_dd_i, &part_end_dd_j, &prefix);
     }
@@ -267,14 +302,27 @@ int main(int argc, char** argv){
 
   long int partition_begin_dr, partition_end_dr;
 
-  total_size = x_data.size();
-
-  partition(x_data.size(), processors, &myid, &partition_begin_dr, &partition_end_dr);
+  if(mode == "2d" || mode == "3d"){
+    total_size = x_data.size();
+    partition(x_data.size(), processors, &myid, &partition_begin_dr, &partition_end_dr);
+  }
+  else if(mode == "tomo"){
+    total_size = phi_data.size();
+    partition(phi_data.size(), processors, &myid, &partition_begin_dr, &partition_end_dr);
+  }
 
   if(calc_DR == "yes"){
-    if(mode == "3d"){
+    if(mode == "2d"){
+      get_mpi_dr_2d(dr, minimum, maximum, numbins, uselog, x_data, y_data,
+        x_rand, y_rand, &partition_begin_dr, &partition_end_dr, &prefix);
+    }
+    else if(mode == "3d"){
       get_mpi_dr_3d(dr, minimum, maximum, numbins, uselog, x_data, y_data, z_data,
         x_rand, y_rand, z_rand, &partition_begin_dr, &partition_end_dr, &prefix);
+    }
+    else if(mode == "tomo"){
+      get_mpi_dr_tomo(dr, minimum, maximum, numbins, uselog, phi_data, theta_data,
+        phi_rand, theta_rand, &partition_begin_dr, &partition_end_dr, &prefix);
     }
   }
 
@@ -294,9 +342,14 @@ int main(int argc, char** argv){
 
   long int partition_begin_rr, partition_end_rr;
 
-  total_size = x_rand.size()*(x_rand.size()-1)/2;
-
-  partition(total_size, processors, &myid, &partition_begin_rr, &partition_end_rr);
+  if(mode == "2d" || mode == "3d"){
+    total_size = x_rand.size()*(x_rand.size()-1)/2;
+    partition(total_size, processors, &myid, &partition_begin_rr, &partition_end_rr);
+  }
+  else if(mode == "tomo"){
+    total_size = phi_rand.size()*(phi_rand.size()-1)/2;
+    partition(total_size, processors, &myid, &partition_begin_rr, &partition_end_rr);
+  }
 
   long int part_begin_rr_i, part_begin_rr_j, part_end_rr_i, part_end_rr_j;
 
@@ -312,8 +365,18 @@ int main(int argc, char** argv){
   }
 
   if(calc_RR == "yes"){
-    if(mode == "3d"){
+    if(mode == "2d"){
+      get_mpi_dd_2d(rr, minimum, maximum, numbins, uselog, x_rand, y_rand,
+        &partition_begin_rr, &partition_end_rr, &part_begin_rr_i, &part_begin_rr_j,
+        &part_end_rr_i, &part_end_rr_j, &prefix);
+    }
+    else if(mode == "3d"){
       get_mpi_dd_3d(rr, minimum, maximum, numbins, uselog, x_rand, y_rand, z_rand,
+        &partition_begin_rr, &partition_end_rr, &part_begin_rr_i, &part_begin_rr_j,
+        &part_end_rr_i, &part_end_rr_j, &prefix);
+    }
+    else if(mode == "tomo"){
+      get_mpi_dd_tomo(rr, minimum, maximum, numbins, uselog, phi_rand, theta_rand,
         &partition_begin_rr, &partition_end_rr, &part_begin_rr_i, &part_begin_rr_j,
         &part_end_rr_i, &part_end_rr_j, &prefix);
     }

@@ -10,10 +10,10 @@ INC = $(TWOFAST_INC)
 LIBS = -lm $(TWOFAST_LIB)
 CFLAGS = $(OPTIMIZE)
 
-SRCS = script_two_point_3d.cpp
-SRCSOMP = script_two_point_3d_omp.cpp
-OBJS = script_two_point_3d.o
-OBJSOMP = script_two_point_3d_omp.o
+SRCS = script_two_point.cpp
+SRCSOMP = script_two_point_omp.cpp
+OBJS = script_two_point.o
+OBJSOMP = script_two_point_omp.o
 
 all: $(OBJS) $(OBJSOMP)
 
