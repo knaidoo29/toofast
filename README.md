@@ -21,11 +21,11 @@ Running the scripts within the script directory.
 
 Non-parallel version:
 
-``./script_two_point_3d.o paramfile_two_point_3d_5000.ini``
+``./script_two_point.o paramfile_two_point_3d_5000.ini``
 
 Parallel version:
 
-``/path/to/mpirun -n 4 ./script_two_point_3d_omp.o paramfile_two_point_3d_5000.ini``
+``/path/to/mpirun -n 4 ./script_two_point_omp.o paramfile_two_point_3d_5000.ini``
 
 ## What can it do?
 
