@@ -2,7 +2,7 @@
 
 Two and three point correlation function estimator in c++ with OpenMPI parallelisation.
 
-## Usage
+## Usage
 
 Don't use this yet... I'm still testing it and things may not work as they are supposed to.
 Full disclosure: this was built as an educational exercise to give myself an excuse to write
