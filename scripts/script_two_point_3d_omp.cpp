@@ -24,7 +24,7 @@ int main(int argc, char** argv){
   progress prog;
 
   if(myid == 0){
-    prog.start("Two Fast");
+    prog.start("TwoFast: 2-Point 3D");
   }
 
   // READING PARAMFILE --------------------------------------------------------------- //
@@ -32,7 +32,7 @@ int main(int argc, char** argv){
   if(myid == 0){
     prog.start_process("Reading Parameter File", 1);
   }
-  
+
   string prefix, paramfile, whichparam, data_file, rand_file, out_file;
   bool data_file_found = false, rand_file_found = false, out_file_found = false;
 
@@ -299,7 +299,7 @@ int main(int argc, char** argv){
   partition(total_size, processors, &myid, &partition_begin_rr, &partition_end_rr);
 
   long int part_begin_rr_i, part_begin_rr_j, part_end_rr_i, part_end_rr_j;
-  
+
   get_triangle_ij(&partition_begin_rr, &part_begin_rr_i, &part_begin_rr_j);
   get_triangle_ij(&partition_end_rr, &part_end_rr_i, &part_end_rr_j);
 
