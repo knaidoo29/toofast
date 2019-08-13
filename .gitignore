@@ -12,3 +12,5 @@ test/two_point_mpi/*.txt
 test/two_point_mpi/*.o
 test/utility_test/*.o*
 test/utility_test/.DS_Store
+
+TWO*

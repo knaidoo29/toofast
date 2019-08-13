@@ -12,15 +12,23 @@ CFLAGS = $(OPTIMIZE)
 
 SRCS = script_two_point.cpp
 SRCSOMP = script_two_point_omp.cpp
-OBJS = script_two_point.o
-OBJSOMP = script_two_point_omp.o
+OBJS = TWOPOINT #script_two_point.o
+OBJSOMP = TWOPOINT_MPI #script_two_point_omp.o
 
 all: $(OBJS) $(OBJSOMP)
 
-.cpp.o:
+#.cpp.o:
+#	$(CC) $(CFLAGS) $(INC) $(SRCS) $(LIBS) -o $(OBJS)
+#	$(CCOMP) $(CFLAGS) $(INC) $(SRCSOMP) $(LIBS) -o $(OBJSOMP)
+
+TWOPOINT:
 	$(CC) $(CFLAGS) $(INC) $(SRCS) $(LIBS) -o $(OBJS)
+	mv $(OBJS) ../$(OBJS)
+
+TWOPOINT_MPI:
 	$(CCOMP) $(CFLAGS) $(INC) $(SRCSOMP) $(LIBS) -o $(OBJSOMP)
+	mv $(OBJSOMP) ../$(OBJSOMP)
 
 clean:
-	rm -r *.o*
-	rm .DS_Store
+	rm -r ../TWOPOINT
+	rm -r ../TWOPOINT_MPI
