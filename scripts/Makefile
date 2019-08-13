@@ -10,24 +10,15 @@ INC = $(TWOFAST_INC)
 LIBS = -lm $(TWOFAST_LIB)
 CFLAGS = $(OPTIMIZE)
 
-SRCS = script_two_point.cpp
-SRCSOMP = script_two_point_omp.cpp
-OBJS = TWOPOINT #script_two_point.o
-OBJSOMP = TWOPOINT_MPI #script_two_point_omp.o
-
-all: $(OBJS) $(OBJSOMP)
-
-#.cpp.o:
-#	$(CC) $(CFLAGS) $(INC) $(SRCS) $(LIBS) -o $(OBJS)
-#	$(CCOMP) $(CFLAGS) $(INC) $(SRCSOMP) $(LIBS) -o $(OBJSOMP)
+all: TWOPOINT TWOPOINT_MPI
 
 TWOPOINT:
-	$(CC) $(CFLAGS) $(INC) $(SRCS) $(LIBS) -o $(OBJS)
-	mv $(OBJS) ../$(OBJS)
+	$(CC) $(CFLAGS) $(INC) two_point.cpp $(LIBS) -o TWOPOINT
+	mv TWOPOINT ../TWOPOINT
 
 TWOPOINT_MPI:
-	$(CCOMP) $(CFLAGS) $(INC) $(SRCSOMP) $(LIBS) -o $(OBJSOMP)
-	mv $(OBJSOMP) ../$(OBJSOMP)
+	$(CCOMP) $(CFLAGS) $(INC) two_point_omp.cpp $(LIBS) -o TWOPOINT_MPI
+	mv TWOPOINT_MPI ../TWOPOINT_MPI
 
 clean:
 	rm -r ../TWOPOINT

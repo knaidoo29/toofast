@@ -18,15 +18,15 @@ in the script folder.
 
 ## Running
 
-Running the scripts within the script directory.
+Run the scripts from the main directory with a paramfile (examples in the paramfile folder).
 
 Non-parallel version:
 
-``./script_two_point.o paramfile_two_point_3d_5000.ini``
+``./TWOPOINT paramfile.ini``
 
 Parallel version:
 
-``/path/to/mpirun -n 4 ./script_two_point_omp.o paramfile_two_point_3d_5000.ini``
+``/path/to/mpirun -n 4 ./TWOPOINT_MPI paramfile.ini``
 
 ## What can it do?
 
