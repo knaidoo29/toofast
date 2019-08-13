@@ -1,15 +1,16 @@
 CC = g++
-CFLAGS = -c
+#CC = /Users/krishna/Programs/build/openmpi/bin/mpic++
+CFLAGS = -c -O3
 
 INC =
 LIBS =
 
-OBJS = src/progress.o src/read.o src/two_point.o src/write.o
+OBJS = src/two_point.o src/util_omp.o src/util_param.o src/util_progress.o src/util_read.o src/util_write.o
 
-all: lib/libtoofast.a
+all: lib/libtwofast.a
 
-lib/libtoofast.a: $(OBJS)
-	 ar cr lib/libtoofast.a $(OBJS)
+lib/libtwofast.a: $(OBJS)
+	 ar cr lib/libtwofast.a $(OBJS)
 
 .cpp.o:
 	 $(CC) $(CFLAGS) $(INC) $< $(LIBS) -o $@

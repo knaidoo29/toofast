@@ -10,7 +10,7 @@ INC = $(TOOFAST_INC)
 LIBS = -lm $(TOOFAST_LIB)
 CFLAGS = $(OPTIMIZE)
 
-OBJS = two_point_mpi_test.o
+OBJS = two_point_mpi_test.o test.o
 
 all: $(OBJS)
 

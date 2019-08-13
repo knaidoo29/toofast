@@ -1,6 +1,10 @@
 src/*.o*
 lib/*.a*
 .DS_Store
+.vscode/*
+
+scripts/input/*
+scripts/output/*
 
 test/two_point_mpi/*.txt
 test/two_point_mpi/*.o

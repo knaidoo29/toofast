@@ -1,6 +1,6 @@
 # TwoFast
 
-Two and three point correlation function estimator in c++.
+Two and three point correlation function estimator in c++ with OpenMPI parallelisation.
 
 ## To do list
 
