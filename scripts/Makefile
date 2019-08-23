@@ -17,7 +17,7 @@ TWOPOINT:
 	mv TWOPOINT ../TWOPOINT
 
 TWOPOINT_MPI:
-	$(CCOMP) $(CFLAGS) $(INC) two_point_omp.cpp $(LIBS) -o TWOPOINT_MPI
+	$(CCOMP) $(CFLAGS) $(INC) two_point_mpi.cpp $(LIBS) -o TWOPOINT_MPI
 	mv TWOPOINT_MPI ../TWOPOINT_MPI
 
 clean:
