@@ -19,4 +19,4 @@ TWOPOINT_MPI
 data/input/*
 data/output/*
 
-twofastpy*.pyc
+twofastpy/*.pyc
