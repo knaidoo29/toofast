@@ -15,7 +15,7 @@ float get_distance_2d(float x1, float y1, float x2, float y2){
     Coordinates of points 1.
   x2, y2 : float
     Coordinates of points 2.
-  
+
   Returns
   -------
   dist : float
@@ -35,7 +35,7 @@ float get_distance_3d(float x1, float y1, float z1, float x2, float y2, float z2
     Coordinates of points 1.
   x2, y2, z2 : float
     Coordinates of points 2.
-  
+
   Returns
   -------
   dist : float
@@ -55,7 +55,7 @@ float get_distance_tomo(float phi1, float theta1, float phi2, float theta2){
     Coordinates of points 1 in radians.
   phi2, theta2 : float
     Coordinates of points 2 in radians.
-  
+
   Returns
   -------
   dist : float
@@ -103,7 +103,7 @@ void get_r(float r[], float minimum, float maximum, int numbins, bool uselog){
   }
 }
 
-void get_xi(long int num_data, long int num_rand, vector<float> &dd, vector<float> &dr, 
+void get_xi(long int num_data, long int num_rand, vector<float> &dd, vector<float> &dr,
   vector<float> &rr, vector<float> &xi){
   /* Calculates the correlation function using the Landy-Szalay estimator.
 
@@ -432,7 +432,7 @@ void get_dr_tomo(vector<float> &dr, float minimum, float maximum, int numbins, b
 }
 
 void get_mpi_dd_2d(vector<float> &dd, float minimum, float maximum, int numbins, bool uselog,
-  vector<float> &x, vector<float> &y, long int *partition_begin, long int *partition_end, 
+  vector<float> &x, vector<float> &y, long int *partition_begin, long int *partition_end,
   long int *partition_begin_i, long int *partition_begin_j, long int *partition_end_i,
   long int *partition_end_j, string *prefix){
   /* Function for parallelised auto pair distance counts. Only takes unique pairs, i.e. i, j when j < i.
@@ -727,7 +727,7 @@ void get_mpi_dr_3d(vector<float> &dr, float minimum, float maximum, int numbins,
 }
 
 void get_mpi_dd_tomo(vector<float> &dd, float minimum, float maximum, int numbins, bool uselog,
-  vector<float> &phi, vector<float> &theta, long int *partition_begin, long int *partition_end, 
+  vector<float> &phi, vector<float> &theta, long int *partition_begin, long int *partition_end,
   long int *partition_begin_i, long int *partition_begin_j, long int *partition_end_i,
   long int *partition_end_j, string *prefix){
   /* Function for parallelised auto pair distance counts. Only takes unique pairs, i.e. i, j when j < i.
