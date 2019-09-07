@@ -38,7 +38,7 @@ class TwoPoint:
             self.mode_data = '3D'
             np.savetxt(self.path + "temp_data.txt", zip(x, y, z))
         elif x is None and y is None and z is None and phi is not None and theta is not None:
-            self.mode_data = 'shell'
+            self.mode_data = 'tomp'
             np.savetxt(self.path + "temp_data.txt", zip(phi, theta))
         elif x is None and y is None and z is None and phi is None and theta is None:
             self.mode_data = None
@@ -53,7 +53,7 @@ class TwoPoint:
             self.mode_rand = '3D'
             np.savetxt(self.path + "temp_rand.txt", zip(x, y, z))
         elif x is None and y is None and z is None and phi is not None and theta is not None:
-            self.mode_rand = 'shell'
+            self.mode_rand = 'tomo'
             np.savetxt(self.path + "temp_rand.txt", zip(phi, theta))
         elif x is None and y is None and z is None and phi is None and theta is None:
             self.mode_rand = None

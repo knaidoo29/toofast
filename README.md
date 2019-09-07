@@ -30,11 +30,12 @@ Parallel version:
 ## What can it do?
 
 Brute force pair distance binning for auto and cross correlation used to calculate
-the two point correlation function in 3D (need to add 2D, tomographic and spherical polar).
+the two point correlation function in 2D/3D and tomographic coordinates.
 
 ## To do list
 
 Brute force method:
+- Spherical polar coordinates, with binning for parallel and perpendicular to the line-of-sight.
 - Three point correlation function using Szapudi-Szalay estimator.
 
 Fast method:
