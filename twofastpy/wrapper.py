@@ -38,7 +38,7 @@ class TwoPoint:
             self.mode_data = '3D'
             np.savetxt(self.path + "temp_data.txt", zip(x, y, z))
         elif x is None and y is None and z is None and phi is not None and theta is not None:
-            self.mode_data = 'tomp'
+            self.mode_data = 'tomo'
             np.savetxt(self.path + "temp_data.txt", zip(phi, theta))
         elif x is None and y is None and z is None and phi is None and theta is None:
             self.mode_data = None

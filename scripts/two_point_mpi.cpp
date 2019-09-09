@@ -126,7 +126,7 @@ int main(int argc, char** argv){
   }
 
   int numbins;
-  float minimum, maximum;
+  double minimum, maximum;
   bool uselog;
 
   if(uselog_str == "yes"){
@@ -156,7 +156,7 @@ int main(int argc, char** argv){
     prog.start_process("Reading data", 1);
   }
 
-  vector<float>pos_data;
+  vector<double>pos_data;
 
   int row_length, column_length;
 
@@ -165,11 +165,11 @@ int main(int argc, char** argv){
     column_length = pos_data.size()/row_length;
   }
 
-  vector<float>x_data;
-  vector<float>y_data;
-  vector<float>z_data;
-  vector<float>phi_data;
-  vector<float>theta_data;
+  vector<double>x_data;
+  vector<double>y_data;
+  vector<double>z_data;
+  vector<double>phi_data;
+  vector<double>theta_data;
 
   if(data_file_found == true){
     if(mode == "2d" || mode == "3d"){
@@ -195,18 +195,18 @@ int main(int argc, char** argv){
 
   MPI_Barrier(MPI_COMM_WORLD);
 
-  vector<float>pos_rand;
+  vector<double>pos_rand;
 
   if(rand_file_found == true){
     row_length = read_ascii_table(rand_file, pos_rand);
     column_length = pos_rand.size()/row_length;
   }
 
-  vector<float>x_rand;
-  vector<float>y_rand;
-  vector<float>z_rand;
-  vector<float>phi_rand;
-  vector<float>theta_rand;
+  vector<double>x_rand;
+  vector<double>y_rand;
+  vector<double>z_rand;
+  vector<double>phi_rand;
+  vector<double>theta_rand;
 
   if(data_file_found == true){
     if(mode == "2d" || mode == "3d"){
@@ -236,38 +236,45 @@ int main(int argc, char** argv){
     prog.start_process("Calculating DD", 1);
   }
 
-  vector<float>dd;
+  vector<double>dd;
 
   for(int i = 0; i < numbins; i++){
     dd.push_back(0.);
   }
 
-  long int total_size, partition_begin_dd, partition_end_dd;
-  
+  long int total_size_dd, partition_begin_dd, partition_end_dd;
+
   if(mode == "2d" || mode == "3d"){
-    total_size = x_data.size()*(x_data.size()-1)/2;
+    if(x_data.size() % 2 == 0){
+      total_size_dd = (x_data.size()/2)*(x_data.size()-1);
+    }
+    else{
+      total_size_dd = x_data.size()*((x_data.size()-1)/2);
+    }
   }
   else if(mode == "tomo"){
-    total_size = phi_data.size()*(phi_data.size()-1)/2;
+    if(phi_data.size() % 2 == 0){
+      total_size_dd = (phi_data.size()/2)*(phi_data.size()-1);
+    }
+    else{
+      total_size_dd = phi_data.size()*((phi_data.size()-1)/2);
+    }
   }
 
-  partition(total_size, processors, &myid, &partition_begin_dd, &partition_end_dd);
+  partition(total_size_dd, processors, &myid, &partition_begin_dd, &partition_end_dd);
 
   long int part_begin_dd_i, part_begin_dd_j, part_end_dd_i, part_end_dd_j;
 
   get_triangle_ij(&partition_begin_dd, &part_begin_dd_i, &part_begin_dd_j);
   get_triangle_ij(&partition_end_dd, &part_end_dd_i, &part_end_dd_j);
 
-  if(part_end_dd_j == 0){
-    part_end_dd_i = part_end_dd_i - 1;
+  part_end_dd_j -= 1;
+
+  if(part_end_dd_j < 0){
+    part_end_dd_i -= 1;
     part_end_dd_j = part_end_dd_i - 1;
   }
-  else{
-    part_end_dd_j = part_end_dd_j - 1;
-  }
-
-  partition_end_dd = partition_end_dd - 1;
-
+  
   if(calc_DD == "yes"){
     if(mode == "2d"){
       get_mpi_dd_2d(dd, minimum, maximum, numbins, uselog, x_data, y_data,
@@ -294,7 +301,7 @@ int main(int argc, char** argv){
     prog.start_process("Calculating DR", 1);
   }
 
-  vector<float>dr;
+  vector<double>dr;
 
   for(int i = 0; i < numbins; i++){
     dr.push_back(0.);
@@ -303,11 +310,9 @@ int main(int argc, char** argv){
   long int partition_begin_dr, partition_end_dr;
 
   if(mode == "2d" || mode == "3d"){
-    total_size = x_data.size();
     partition(x_data.size(), processors, &myid, &partition_begin_dr, &partition_end_dr);
   }
   else if(mode == "tomo"){
-    total_size = phi_data.size();
     partition(phi_data.size(), processors, &myid, &partition_begin_dr, &partition_end_dr);
   }
 
@@ -334,34 +339,43 @@ int main(int argc, char** argv){
     prog.start_process("Calculating RR", 1);
   }
 
-  vector<float>rr;
+  vector<double>rr;
 
   for(int i = 0; i < numbins; i++){
     rr.push_back(0.);
   }
 
-  long int partition_begin_rr, partition_end_rr;
+  long int total_size_rr, partition_begin_rr, partition_end_rr;
 
   if(mode == "2d" || mode == "3d"){
-    total_size = x_rand.size()*(x_rand.size()-1)/2;
-    partition(total_size, processors, &myid, &partition_begin_rr, &partition_end_rr);
+    if(x_rand.size() % 2 == 0){
+      total_size_rr = (x_rand.size()/2)*(x_rand.size()-1);
+    }
+    else{
+      total_size_rr = x_rand.size()*((x_rand.size()-1)/2);
+    }
   }
   else if(mode == "tomo"){
-    total_size = phi_rand.size()*(phi_rand.size()-1)/2;
-    partition(total_size, processors, &myid, &partition_begin_rr, &partition_end_rr);
+    if(phi_data.size() % 2 == 0){
+      total_size_rr = (phi_rand.size()/2)*(phi_rand.size()-1);
+    }
+    else{
+      total_size_rr = phi_rand.size()*((phi_rand.size()-1)/2);
+    }
   }
+
+  partition(total_size_rr, processors, &myid, &partition_begin_rr, &partition_end_rr);
 
   long int part_begin_rr_i, part_begin_rr_j, part_end_rr_i, part_end_rr_j;
 
   get_triangle_ij(&partition_begin_rr, &part_begin_rr_i, &part_begin_rr_j);
   get_triangle_ij(&partition_end_rr, &part_end_rr_i, &part_end_rr_j);
 
-  if(part_end_rr_j == 0){
+  part_end_rr_j -= 1;
+
+  if(part_end_rr_j < 0){
     part_end_rr_i -= 1;
     part_end_rr_j = part_end_rr_i - 1;
-  }
-  else{
-    part_end_rr_j -= 1;
   }
 
   if(calc_RR == "yes"){
@@ -390,31 +404,31 @@ int main(int argc, char** argv){
     prog.start_process("Save data", 1);
   }
 
-  float r[numbins];
+  double r[numbins];
 
   get_r(r, minimum, maximum, numbins, uselog);
 
-  int dest = 0, tag = 0;
+  int dest = 0, tag1 = 0, tag2 = 1, tag3 = 2;
   if(myid == 0){
-    vector<float>dd_total;
-    vector<float>dr_total;
-    vector<float>rr_total;
-    for(int i = 0; i < numbins; i++){
+    vector<double>dd_total;
+    vector<double>dr_total;
+    vector<double>rr_total;
+    for(long int i = 0; i < numbins; i++){
       dd_total.push_back(dd[i]);
       dr_total.push_back(dr[i]);
       rr_total.push_back(rr[i]);
     }
     for(int source = 1; source < processors; source++){
-      MPI_Recv(&dd[0], dd.size(), MPI_FLOAT, source, tag, MPI_COMM_WORLD, &status);
-      for(int i = 0; i < dd.size(); i++){
+      MPI_Recv(&dd[0], dd.size(), MPI_DOUBLE, source, tag1, MPI_COMM_WORLD, &status);
+      for(long int i = 0; i < dd.size(); i++){
         dd_total[i] += dd[i];
       }
-      MPI_Recv(&dr[0], dr.size(), MPI_FLOAT, source, tag, MPI_COMM_WORLD, &status);
-      for(int i = 0; i < dr.size(); i++){
+      MPI_Recv(&dr[0], dr.size(), MPI_DOUBLE, source, tag2, MPI_COMM_WORLD, &status);
+      for(long int i = 0; i < dr.size(); i++){
         dr_total[i] += dr[i];
       }
-      MPI_Recv(&rr[0], rr.size(), MPI_FLOAT, source, tag, MPI_COMM_WORLD, &status);
-      for(int i = 0; i < rr.size(); i++){
+      MPI_Recv(&rr[0], rr.size(), MPI_DOUBLE, source, tag3, MPI_COMM_WORLD, &status);
+      for(long int i = 0; i < rr.size(); i++){
         rr_total[i] += rr[i];
       }
     }
@@ -431,8 +445,8 @@ int main(int argc, char** argv){
       wr.store(rr_total, numbins, "RR");
     }
     if(calc_xi == "yes"){
-      vector<float>xi;
-      for(int i = 0; i < numbins; i++){
+      vector<double>xi;
+      for(long int i = 0; i < numbins; i++){
         xi.push_back(0.);
       }
       get_xi(x_data.size(), x_rand.size(), dd_total, dr_total, rr_total, xi);
@@ -441,9 +455,9 @@ int main(int argc, char** argv){
     wr.write2file(out_file);
   }
   else{
-    MPI_Send(&dd[0], dd.size(), MPI_FLOAT, dest, tag, MPI_COMM_WORLD);
-    MPI_Send(&dr[0], dr.size(), MPI_FLOAT, dest, tag, MPI_COMM_WORLD);
-    MPI_Send(&rr[0], rr.size(), MPI_FLOAT, dest, tag, MPI_COMM_WORLD);
+    MPI_Send(&dd[0], dd.size(), MPI_DOUBLE, dest, tag1, MPI_COMM_WORLD);
+    MPI_Send(&dr[0], dr.size(), MPI_DOUBLE, dest, tag2, MPI_COMM_WORLD);
+    MPI_Send(&rr[0], rr.size(), MPI_DOUBLE, dest, tag3, MPI_COMM_WORLD);
   }
 
   if(myid == 0){

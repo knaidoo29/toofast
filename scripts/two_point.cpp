@@ -83,7 +83,7 @@ int main(int argc, char** argv){
   summarise_param(whichparam, numbins_str, numbins_found);
 
   int numbins;
-  float minimum, maximum;
+  double minimum, maximum;
   bool uselog;
 
   if(uselog_str == "yes"){
@@ -107,7 +107,7 @@ int main(int argc, char** argv){
 
   prog.start_process("Reading data", 1);
 
-  vector<float>pos_data;
+  vector<double>pos_data;
 
   int row_length, column_length;
 
@@ -116,11 +116,11 @@ int main(int argc, char** argv){
     column_length = pos_data.size()/row_length;
   }
 
-  vector<float>x_data;
-  vector<float>y_data;
-  vector<float>z_data;
-  vector<float>phi_data;
-  vector<float>theta_data;
+  vector<double>x_data;
+  vector<double>y_data;
+  vector<double>z_data;
+  vector<double>phi_data;
+  vector<double>theta_data;
 
   if(data_file_found == true){
     if(mode == "2d" || mode == "3d"){
@@ -142,18 +142,18 @@ int main(int argc, char** argv){
 
   // --------------------------------------------------------------------------------- //
 
-  vector<float>pos_rand;
+  vector<double>pos_rand;
 
   if(rand_file_found == true){
     row_length = read_ascii_table(rand_file, pos_rand);
     column_length = pos_rand.size()/row_length;
   }
 
-  vector<float>x_rand;
-  vector<float>y_rand;
-  vector<float>z_rand;
-  vector<float>phi_rand;
-  vector<float>theta_rand;
+  vector<double>x_rand;
+  vector<double>y_rand;
+  vector<double>z_rand;
+  vector<double>phi_rand;
+  vector<double>theta_rand;
 
   if(data_file_found == true){
     if(mode == "2d" || mode == "3d"){
@@ -177,7 +177,7 @@ int main(int argc, char** argv){
 
   prog.start_process("Calculating DD", 1);
 
-  vector<float>dd;
+  vector<double>dd;
 
   for(int i = 0; i < numbins; i++){
     dd.push_back(0.);
@@ -199,7 +199,7 @@ int main(int argc, char** argv){
 
   prog.start_process("Calculating DR", 1);
 
-  vector<float>dr;
+  vector<double>dr;
 
   for(int i = 0; i < numbins; i++){
     dr.push_back(0.);
@@ -222,7 +222,7 @@ int main(int argc, char** argv){
 
   prog.start_process("Calculating RR", 1);
 
-  vector<float>rr;
+  vector<double>rr;
 
   for(int i = 0; i < numbins; i++){
     rr.push_back(0.);
@@ -244,7 +244,7 @@ int main(int argc, char** argv){
 
   prog.start_process("Save data", 1);
 
-  float r[numbins];
+  double r[numbins];
 
   get_r(r, minimum, maximum, numbins, uselog);
 
@@ -261,7 +261,7 @@ int main(int argc, char** argv){
     wr.store(rr, numbins, "RR");
   }
   if(calc_xi == "yes"){
-    vector<float>xi;
+    vector<double>xi;
     for(int i = 0; i < numbins; i++){
       xi.push_back(0.);
     }

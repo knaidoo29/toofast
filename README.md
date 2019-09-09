@@ -1,8 +1,7 @@
 # TwoFast
 
 Two point correlation function estimator in c++ with OpenMPI parallelisation and python
-management class for generating input and parameter files, and then subsequently
-running the routines.
+management class for generating input files and running it.
 
 ## Usage
 
