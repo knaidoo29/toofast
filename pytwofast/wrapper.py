@@ -96,9 +96,9 @@ class TwoPoint:
             subprocess.call(twopoint + " " +self.path+ "temp_paramfile.ini", shell=True)
         else:
             if location == 'splinter':
-            subprocess.call(mpirun + " --machinefile $PBS_NODEFILE -x PATH -x LD_LIBRARY_PATH " + twopoint_mpi + " " +self.path+ "temp_paramfile.ini", shell=True)
+                subprocess.call(mpirun + " --machinefile $PBS_NODEFILE -x PATH -x LD_LIBRARY_PATH " + twopoint_mpi + " " +self.path+ "temp_paramfile.ini", shell=True)
             else:
-            subprocess.call(mpirun + " -n " + str(processors) + " " + twopoint_mpi + " " +self.path+ "temp_paramfile.ini", shell=True)
+                subprocess.call(mpirun + " -n " + str(processors) + " " + twopoint_mpi + " " +self.path+ "temp_paramfile.ini", shell=True)
 
     def clean(self, remove_temp_files=True):
         if remove_temp_files == True:
