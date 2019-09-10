@@ -47,7 +47,7 @@ void Writer::store(TYPE array[], int size, string description, string store_type
   string description:
     A description of the array being stored.
   string store_type:
-    How to store the array. 
+    How to store the array.
   */
   if(store_as == "undefined"){
     store_as = store_type;
@@ -105,7 +105,7 @@ void Writer::store(vector<TYPE> &array, int size, string description, string sto
   string description:
     A description of the array being stored.
   string store_type:
-    How to store the array. 
+    How to store the array.
   */
   if(store_as == "undefined"){
     store_as = store_type;

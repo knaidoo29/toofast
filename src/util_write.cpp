@@ -31,8 +31,7 @@ void Writer::write2file(string filename){
   int num = structure.size();
   Writer::restructure();
   string line;
-  line = "# ASCII DATA FILE: COLUMNS = " + to_string(size) + ", ROWS= "
-   + to_string(num) + "\n";
+  line = "# ASCII DATA FILE: COLUMNS = " + to_string(size) + ", ROWS= " + to_string(num) + "\n";
   _file << line;
   if(explanation.size() != 0){
     for(int i = 0; i < explanation.size(); i++){
@@ -81,7 +80,7 @@ void Writer::write2file(string filename){
 }
 
 void Writer::restructure(){
-  /* Forgotten what this does... restructures something but don't remember what... 
+  /* Forgotten what this does... restructures something but don't remember what...
   this is why you document stuff as you write it. Maybe to do with storing arrays of
   different lengths. Apparently anticipated a problem that I didn't even remember it could handle.
   */
@@ -98,12 +97,12 @@ void Writer::restructure(){
 }
 
 void Writer::redistribute(string conversion){
-  /* Converts data types. 
-  
+  /* Converts data types.
+
   Parameters
   ----------
   string conversion:
-    Conversion of data type to be written as a string. This always increases precision, 
+    Conversion of data type to be written as a string. This always increases precision,
     i.e. int to float/double or float to double.
   */
   if(conversion == "int2float"){

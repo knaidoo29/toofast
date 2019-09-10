@@ -1,5 +1,6 @@
 #include "mpi.h"
 #include <iostream>
+#include <algorithm>
 #include <vector>
 #include <fstream>
 #include <sstream>
@@ -274,7 +275,7 @@ int main(int argc, char** argv){
     part_end_dd_i -= 1;
     part_end_dd_j = part_end_dd_i - 1;
   }
-  
+
   if(calc_DD == "yes"){
     if(mode == "2d"){
       get_mpi_dd_2d(dd, minimum, maximum, numbins, uselog, x_data, y_data,

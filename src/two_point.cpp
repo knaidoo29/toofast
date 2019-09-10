@@ -47,7 +47,8 @@ double get_distance_3d(double x1, double y1, double z1, double x2, double y2, do
 }
 
 double get_distance_tomo(double phi1, double theta1, double phi2, double theta2){
-  /* Great angle distance between two points on a sphere.
+  /* Great angle distance between two points on a sphere. where phi lies between
+  the range = [0, 2*PI] and theta [0, PI].
 
   Parameters
   ----------

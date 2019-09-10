@@ -2,6 +2,7 @@
 //#define UTIL_READ_H
 
 #include <iostream>
+#include <algorithm>
 #include <vector>
 #include <fstream>
 #include <sstream>

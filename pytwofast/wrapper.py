@@ -39,7 +39,15 @@ class TwoPoint:
             np.savetxt(self.path + "temp_data.txt", zip(x, y, z))
         elif x is None and y is None and z is None and phi is not None and theta is not None:
             self.mode_data = 'tomo'
-            np.savetxt(self.path + "temp_data.txt", zip(phi, theta))
+            condition = np.where((phi < 0.) | (phi > 2.*np.pi) | (theta < 0.) | (theta > np.pi))[0]
+            if len(condition) == 0:
+                np.savetxt(self.path + "temp_data.txt", zip(phi, theta))
+            else:
+                print "!!Tomographic Range Error!!"
+                print "phi must be given in radians between 0 and 2*PI"
+                print "current range for phi = ", phi.min(), phi.max()
+                print "theta must be given in radians between 0 and PI"
+                print "current range for theta = ", theta.min(), theta.max()
         elif x is None and y is None and z is None and phi is None and theta is None:
             self.mode_data = None
         else:
@@ -54,7 +62,15 @@ class TwoPoint:
             np.savetxt(self.path + "temp_rand.txt", zip(x, y, z))
         elif x is None and y is None and z is None and phi is not None and theta is not None:
             self.mode_rand = 'tomo'
-            np.savetxt(self.path + "temp_rand.txt", zip(phi, theta))
+            condition = np.where((phi < 0.) | (phi > 2.*np.pi) | (theta < 0.) | (theta > np.pi))[0]
+            if len(condition) == 0:
+                np.savetxt(self.path + "temp_rand.txt", zip(phi, theta))
+            else:
+                print "!!Tomographic Range Error!!"
+                print "phi must be given in radians between 0 and 2*PI"
+                print "current range for phi = ", phi.min(), phi.max()
+                print "theta must be given in radians between 0 and PI"
+                print "current range for theta = ", theta.min(), theta.max()
         elif x is None and y is None and z is None and phi is None and theta is None:
             self.mode_rand = None
         else:
@@ -77,13 +93,13 @@ class TwoPoint:
                               self.uselog, self.minimum, self.maximum, self.numbins)
         mpirun, twopoint, twopoint_mpi = source.get_src(location)
         if processors == 1:
-            subprocess.call(twopoint + " "+self.path+"temp_paramfile.ini", shell=True)
+            subprocess.call(twopoint + " " +self.path+ "temp_paramfile.ini", shell=True)
         else:
-            subprocess.call(mpirun + " -n " + str(processors) + " " + twopoint_mpi + " "+self.path+"temp_paramfile.ini", shell=True)
+            subprocess.call(mpirun + " -n " + str(processors) + " " + twopoint_mpi + " " +self.path+ "temp_paramfile.ini", shell=True)
 
     def clean(self, remove_temp_files=True):
         if remove_temp_files == True:
-            subprocess.call("rm "+self.path+"temp_data.txt", shell=True)
-            subprocess.call("rm "+self.path+"temp_rand.txt", shell=True)
-            subprocess.call("rm "+self.path+"temp_paramfile.ini", shell=True)
+            subprocess.call("rm " + self.path + "temp_data.txt", shell=True)
+            subprocess.call("rm " + self.path + "temp_rand.txt", shell=True)
+            subprocess.call("rm " + self.path + "temp_paramfile.ini", shell=True)
         self.__init__()
