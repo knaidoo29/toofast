@@ -1,10 +1,20 @@
-CC = g++
-CCOMP = /Users/krishna/Programs/build/openmpi/bin/mpic++
+MACHINE = KRISHMACBOOK
+
+ifeq ($(MACHINE),KRISHMACBOOK)
+	CC = g++
+	CCOMP = /Users/krishna/Programs/build/openmpi/bin/mpic++
+	TWOFAST_INC = -I/Users/krishna/Research/github/twofast/include
+	TWOFAST_LIB = -L/Users/krishna/Research/github/twofast/lib -ltwofast
+endif
+
+ifeq ($(MACHINE),SPLINTER)
+	CC = g++
+	CCOMP = /opt/openmpi/bin/mpic++
+	TWOFAST_INC = -I/share/data1/knaidoo/splinter_libraries/src/twofast/include
+	TWOFAST_LIB = -L/share/data1/knaidoo/splinter_libraries/src/twofast/lib -ltwofast
+endif
 
 OPTIMIZE = -O3
-
-TWOFAST_INC = -I/Users/krishna/Research/github/twofast/include
-TWOFAST_LIB = -L/Users/krishna/Research/github/twofast/lib -ltwofast
 
 INC = $(TWOFAST_INC)
 LIBS = -lm $(TWOFAST_LIB)
