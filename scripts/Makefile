@@ -9,7 +9,7 @@ endif
 
 ifeq ($(MACHINE),SPLINTER)
 	CC = g++
-	CCOMP = /opt/openmpi/bin/mpic++
+	CCOMP = mpic++
 	TWOFAST_INC = -I/share/data1/knaidoo/splinter_libraries/src/twofast/include
 	TWOFAST_LIB = -L/share/data1/knaidoo/splinter_libraries/src/twofast/lib -ltwofast
 endif
