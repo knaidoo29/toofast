@@ -96,7 +96,7 @@ class TwoPoint:
         else:
             self.mode_rand = None
 
-    def run(self, output_fname, location='home', processors=4, parallel_setup=None):
+    def run(self, output_fname, location='home', processors=4):
         if self.mode_data is not None:
             if self.identifier is None:
                 data_fname = self.path + "temp_data.txt"
@@ -125,7 +125,7 @@ class TwoPoint:
             subprocess.call(twopoint + " " +param_fname, shell=True)
         else:
             if location == 'splinter':
-                subprocess.call("mpirun -np " +str(processors) + " "+ twopoint_mpi + " " +param_fname, shell=True)
+                subprocess.call("mpirun -n " +str(processors) + " "+ twopoint_mpi + " " +param_fname, shell=True)
             else:
                 subprocess.call(mpirun + " -n " + str(processors) + " " + twopoint_mpi + " " +param_fname, shell=True)
 
