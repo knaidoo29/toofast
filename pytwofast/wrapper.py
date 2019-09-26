@@ -84,7 +84,7 @@ class TwoPoint:
                 if self.identifier is None:
                     np.savetxt(self.path + "temp_rand.txt", zip(phi, theta))
                 else:
-                    np.savetxt(self.path + "temp_rand_"+str(self.identifier)+".txt", zip(x, y, z))
+                    np.savetxt(self.path + "temp_rand_"+str(self.identifier)+".txt", zip(phi, theta))
             else:
                 print "!!Tomographic Range Error!!"
                 print "phi must be given in radians between 0 and 2*PI"
