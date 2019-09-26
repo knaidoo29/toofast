@@ -124,10 +124,8 @@ class TwoPoint:
         if processors == 1:
             subprocess.call(twopoint + " " +param_fname, shell=True)
         else:
-            if parallel_setup == 'test':
+            if location == 'splinter':
                 subprocess.call("mpirun " + twopoint_mpi + " " +param_fname, shell=True)
-            elif parallel_setup == 'machinefile':
-                subprocess.call(mpirun + " --machinefile $PBS_NODEFILE -x PATH -x LD_LIBRARY_PATH " + twopoint_mpi + " " +param_fname, shell=True)
             else:
                 subprocess.call(mpirun + " -n " + str(processors) + " " + twopoint_mpi + " " +param_fname, shell=True)
 
