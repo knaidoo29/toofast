@@ -125,7 +125,7 @@ class TwoPoint:
             subprocess.call(twopoint + " " +param_fname, shell=True)
         else:
             if location == 'splinter':
-                subprocess.call("mpirun " + twopoint_mpi + " " + param_fname, shell=True)
+                subprocess.call("mpirun -np $SLURM_NTASKS " + twopoint_mpi + " " + param_fname, shell=True)
             else:
                 subprocess.call(mpirun + " -n " + str(processors) + " " + twopoint_mpi + " " +param_fname, shell=True)
 
