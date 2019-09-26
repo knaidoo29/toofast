@@ -54,11 +54,11 @@ class TwoPoint:
                 else:
                     np.savetxt(self.path + "temp_data_"+str(self.identifier)+".txt", zip(phi, theta))
             else:
-                print "!!Tomographic Range Error!!"
-                print "phi must be given in radians between 0 and 2*PI"
-                print "current range for phi = ", phi.min(), phi.max()
-                print "theta must be given in radians between 0 and PI"
-                print "current range for theta = ", theta.min(), theta.max()
+                print("!!Tomographic Range Error!!")
+                print("phi must be given in radians between 0 and 2*PI")
+                print("current range for phi = ", phi.min(), phi.max())
+                print("theta must be given in radians between 0 and PI")
+                print("current range for theta = ", theta.min(), theta.max())
         elif x is None and y is None and z is None and phi is None and theta is None:
             self.mode_data = None
         else:
@@ -86,11 +86,11 @@ class TwoPoint:
                 else:
                     np.savetxt(self.path + "temp_rand_"+str(self.identifier)+".txt", zip(phi, theta))
             else:
-                print "!!Tomographic Range Error!!"
-                print "phi must be given in radians between 0 and 2*PI"
-                print "current range for phi = ", phi.min(), phi.max()
-                print "theta must be given in radians between 0 and PI"
-                print "current range for theta = ", theta.min(), theta.max()
+                print("!!Tomographic Range Error!!")
+                print("phi must be given in radians between 0 and 2*PI")
+                print("current range for phi = ", phi.min(), phi.max())
+                print("theta must be given in radians between 0 and PI")
+                print("current range for theta = ", theta.min(), theta.max())
         elif x is None and y is None and z is None and phi is None and theta is None:
             self.mode_rand = None
         else:
