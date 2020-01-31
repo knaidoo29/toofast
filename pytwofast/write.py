@@ -3,7 +3,7 @@ import subprocess
 
 
 def write_paramfile(data_fname, rand_fname, out_fname, param_fname, mode, calc_DD,
-                    calc_DR, calc_RR, calc_xi, uselog, minimum, maximum, numbins):
+                    calc_DR, calc_RR, calc_xi, uselog, useweight, minimum, maximum, numbins):
     """
     Writes a parameter file to be read by twofast.
 
@@ -29,6 +29,8 @@ def write_paramfile(data_fname, rand_fname, out_fname, param_fname, mode, calc_D
         Directly calculate the correlation function using Landy-Szalay estimator.
     uselog : bool
         Where to use logarithmic bins.
+    useweight : bool
+        Define weight for each point.
     minimum : float
         Minimum distance.
     maximum : float
@@ -68,6 +70,10 @@ def write_paramfile(data_fname, rand_fname, out_fname, param_fname, mode, calc_D
         paramfile.write("uselog          yes %\n")
     else:
         paramfile.write("uselog          no %\n")
+    if useweight == True:
+        paramfile.write("useweight       yes %\n")
+    else:
+        paramfile.write("useweight       no %\n")
     paramfile.write("minimum         "+str(minimum)+" %\n")
     paramfile.write("maximum         "+str(maximum)+" %\n")
     paramfile.write("numbins         "+str(numbins)+" %\n")
