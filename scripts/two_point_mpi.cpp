@@ -37,9 +37,9 @@ int main(int argc, char** argv){
   string prefix, paramfile, whichparam, data_file, rand_file, out_file;
   bool data_file_found = false, rand_file_found = false, out_file_found = false;
 
-  string mode, calc_DD, calc_DR, calc_RR, calc_xi, uselog_str, minimum_str, maximum_str, numbins_str;
+  string mode, calc_DD, calc_DR, calc_RR, calc_xi, uselog_str, useweight_str, minimum_str, maximum_str, numbins_str;
   bool mode_found = false, calc_DD_found = false, calc_DR_found = false, calc_RR_found = false, calc_xi_found = false;
-  bool uselog_found = false, minimum_found = false, maximum_found = false, numbins_found = false;
+  bool uselog_found = false, useweight_found = false, minimum_found = false, maximum_found = false, numbins_found = false;
 
   prefix = "processor = " + to_string(myid+1) + "/" + to_string(processors) + ":  ";
   paramfile = argv[1];
@@ -108,6 +108,13 @@ int main(int argc, char** argv){
     summarise_param(whichparam, uselog_str, uselog_found);
   }
 
+  whichparam = "useweight";
+  extract_param(paramfile, whichparam, &useweight_str, &useweight_found);
+  for_each(useweight_str.begin(), useweight_str.end(), to_lowercase);
+  if(myid == 0){
+    summarise_param(whichparam, useweight_str, useweight_found);
+  }
+
   whichparam = "minimum";
   extract_param(paramfile, whichparam, &minimum_str, &minimum_found);
   if(myid == 0){
@@ -128,7 +135,7 @@ int main(int argc, char** argv){
 
   int numbins;
   double minimum, maximum;
-  bool uselog;
+  bool uselog, useweight;
 
   if(uselog_str == "yes"){
     uselog = true;
@@ -142,6 +149,21 @@ int main(int argc, char** argv){
       cout << "Should be either yes/no" << endl;
       cout << "Will assume 'no'" << endl;
       uselog = false;
+    }
+  }
+
+  if(useweight_str == "yes"){
+    useweight = true;
+  }
+  else if(useweight_str == "no"){
+    useweight = false;
+  }
+  else{
+    if(myid == 0){
+      cout << "Error: useweight is ill defined -- found in paramfile = " << useweight_str << endl;
+      cout << "Should be either yes/no" << endl;
+      cout << "Will assume 'no'" << endl;
+      useweight = false;
     }
   }
 
@@ -171,18 +193,28 @@ int main(int argc, char** argv){
   vector<double>z_data;
   vector<double>phi_data;
   vector<double>theta_data;
+  vector<double>w_data;
 
   if(data_file_found == true){
     if(mode == "2d" || mode == "3d"){
       extract_from_table(pos_data, 0, row_length, x_data);
       extract_from_table(pos_data, 1, row_length, y_data);
+      if(mode == "2d" && useweight == true){
+        extract_from_table(pos_data, 2, row_length, w_data);
+      }
       if(mode == "3d"){
         extract_from_table(pos_data, 2, row_length, z_data);
+        if(mode == "3d" && useweight == true){
+          extract_from_table(pos_data, 3, row_length, w_data);
+        }
       }
     }
     else if(mode == "tomo"){
       extract_from_table(pos_data, 0, row_length, phi_data);
       extract_from_table(pos_data, 1, row_length, theta_data);
+      if(mode == "tomo" && useweight == true){
+        extract_from_table(pos_data, 2, row_length, w_data);
+      }
     }
   }
 
@@ -208,18 +240,28 @@ int main(int argc, char** argv){
   vector<double>z_rand;
   vector<double>phi_rand;
   vector<double>theta_rand;
+  vector<double>w_rand;
 
   if(data_file_found == true){
     if(mode == "2d" || mode == "3d"){
       extract_from_table(pos_rand, 0, row_length, x_rand);
       extract_from_table(pos_rand, 1, row_length, y_rand);
+      if(mode == "2d" && useweight == true){
+        extract_from_table(pos_rand, 2, row_length, w_rand);
+      }
       if(mode == "3d"){
         extract_from_table(pos_rand, 2, row_length, z_rand);
+        if(mode == "3d" && useweight == true){
+          extract_from_table(pos_rand, 3, row_length, w_rand);
+        }
       }
     }
     else if(mode == "tomo"){
       extract_from_table(pos_rand, 0, row_length, phi_rand);
       extract_from_table(pos_rand, 1, row_length, theta_rand);
+      if(mode == "tomo" && useweight == true){
+        extract_from_table(pos_rand, 2, row_length, w_rand);
+      }
     }
   }
 
@@ -278,19 +320,40 @@ int main(int argc, char** argv){
 
   if(calc_DD == "yes"){
     if(mode == "2d"){
-      get_mpi_dd_2d(dd, minimum, maximum, numbins, uselog, x_data, y_data,
-        &partition_begin_dd, &partition_end_dd, &part_begin_dd_i, &part_begin_dd_j,
-        &part_end_dd_i, &part_end_dd_j, &prefix);
+      if(useweight == false){
+        get_mpi_dd_2d(dd, minimum, maximum, numbins, uselog, x_data, y_data,
+          &partition_begin_dd, &partition_end_dd, &part_begin_dd_i, &part_begin_dd_j,
+          &part_end_dd_i, &part_end_dd_j, &prefix);
+      }
+      else{
+        get_mpi_dd_2d_w(dd, minimum, maximum, numbins, uselog, x_data, y_data, w_data,
+          &partition_begin_dd, &partition_end_dd, &part_begin_dd_i, &part_begin_dd_j,
+          &part_end_dd_i, &part_end_dd_j, &prefix);
+      }
     }
     else if(mode == "3d"){
-      get_mpi_dd_3d(dd, minimum, maximum, numbins, uselog, x_data, y_data, z_data,
-        &partition_begin_dd, &partition_end_dd, &part_begin_dd_i, &part_begin_dd_j,
-        &part_end_dd_i, &part_end_dd_j, &prefix);
+      if(useweight == false){
+        get_mpi_dd_3d(dd, minimum, maximum, numbins, uselog, x_data, y_data, z_data,
+          &partition_begin_dd, &partition_end_dd, &part_begin_dd_i, &part_begin_dd_j,
+          &part_end_dd_i, &part_end_dd_j, &prefix);
+      }
+      else{
+        get_mpi_dd_3d_w(dd, minimum, maximum, numbins, uselog, x_data, y_data, z_data, w_data,
+          &partition_begin_dd, &partition_end_dd, &part_begin_dd_i, &part_begin_dd_j,
+          &part_end_dd_i, &part_end_dd_j, &prefix);
+      }
     }
     else if(mode == "tomo"){
-      get_mpi_dd_tomo(dd, minimum, maximum, numbins, uselog, phi_data, theta_data,
-        &partition_begin_dd, &partition_end_dd, &part_begin_dd_i, &part_begin_dd_j,
-        &part_end_dd_i, &part_end_dd_j, &prefix);
+      if(useweight == false){
+        get_mpi_dd_tomo(dd, minimum, maximum, numbins, uselog, phi_data, theta_data,
+          &partition_begin_dd, &partition_end_dd, &part_begin_dd_i, &part_begin_dd_j,
+          &part_end_dd_i, &part_end_dd_j, &prefix);
+      }
+      else{
+        get_mpi_dd_tomo_w(dd, minimum, maximum, numbins, uselog, phi_data, theta_data, w_data,
+          &partition_begin_dd, &partition_end_dd, &part_begin_dd_i, &part_begin_dd_j,
+          &part_end_dd_i, &part_end_dd_j, &prefix);
+      }
     }
   }
 
@@ -319,16 +382,34 @@ int main(int argc, char** argv){
 
   if(calc_DR == "yes"){
     if(mode == "2d"){
-      get_mpi_dr_2d(dr, minimum, maximum, numbins, uselog, x_data, y_data,
-        x_rand, y_rand, &partition_begin_dr, &partition_end_dr, &prefix);
+      if(useweight == false){
+        get_mpi_dr_2d(dr, minimum, maximum, numbins, uselog, x_data, y_data,
+          x_rand, y_rand, &partition_begin_dr, &partition_end_dr, &prefix);
+      }
+      else{
+        get_mpi_dr_2d_w(dr, minimum, maximum, numbins, uselog, x_data, y_data,
+          x_rand, y_rand, w_data, w_rand, &partition_begin_dr, &partition_end_dr, &prefix);
+      }
     }
     else if(mode == "3d"){
-      get_mpi_dr_3d(dr, minimum, maximum, numbins, uselog, x_data, y_data, z_data,
-        x_rand, y_rand, z_rand, &partition_begin_dr, &partition_end_dr, &prefix);
+      if(useweight == false){
+        get_mpi_dr_3d(dr, minimum, maximum, numbins, uselog, x_data, y_data, z_data,
+          x_rand, y_rand, z_rand, &partition_begin_dr, &partition_end_dr, &prefix);
+      }
+      else{
+        get_mpi_dr_3d_w(dr, minimum, maximum, numbins, uselog, x_data, y_data, z_data,
+          x_rand, y_rand, z_rand, w_data, w_rand, &partition_begin_dr, &partition_end_dr, &prefix);
+      }
     }
     else if(mode == "tomo"){
-      get_mpi_dr_tomo(dr, minimum, maximum, numbins, uselog, phi_data, theta_data,
-        phi_rand, theta_rand, &partition_begin_dr, &partition_end_dr, &prefix);
+      if(useweight == false){
+        get_mpi_dr_tomo(dr, minimum, maximum, numbins, uselog, phi_data, theta_data,
+          phi_rand, theta_rand, &partition_begin_dr, &partition_end_dr, &prefix);
+      }
+      else{
+        get_mpi_dr_tomo_w(dr, minimum, maximum, numbins, uselog, phi_data, theta_data,
+          phi_rand, theta_rand, w_data, w_rand, &partition_begin_dr, &partition_end_dr, &prefix);
+      }
     }
   }
 
@@ -381,19 +462,40 @@ int main(int argc, char** argv){
 
   if(calc_RR == "yes"){
     if(mode == "2d"){
-      get_mpi_dd_2d(rr, minimum, maximum, numbins, uselog, x_rand, y_rand,
-        &partition_begin_rr, &partition_end_rr, &part_begin_rr_i, &part_begin_rr_j,
-        &part_end_rr_i, &part_end_rr_j, &prefix);
+      if(useweight == false){
+        get_mpi_dd_2d(rr, minimum, maximum, numbins, uselog, x_rand, y_rand,
+          &partition_begin_rr, &partition_end_rr, &part_begin_rr_i, &part_begin_rr_j,
+          &part_end_rr_i, &part_end_rr_j, &prefix);
+      }
+      else{
+        get_mpi_dd_2d_w(rr, minimum, maximum, numbins, uselog, x_rand, y_rand, w_rand,
+          &partition_begin_rr, &partition_end_rr, &part_begin_rr_i, &part_begin_rr_j,
+          &part_end_rr_i, &part_end_rr_j, &prefix);
+      }
     }
     else if(mode == "3d"){
-      get_mpi_dd_3d(rr, minimum, maximum, numbins, uselog, x_rand, y_rand, z_rand,
-        &partition_begin_rr, &partition_end_rr, &part_begin_rr_i, &part_begin_rr_j,
-        &part_end_rr_i, &part_end_rr_j, &prefix);
+      if(useweight == false){
+        get_mpi_dd_3d(rr, minimum, maximum, numbins, uselog, x_rand, y_rand, z_rand,
+          &partition_begin_rr, &partition_end_rr, &part_begin_rr_i, &part_begin_rr_j,
+          &part_end_rr_i, &part_end_rr_j, &prefix);
+      }
+      else{
+        get_mpi_dd_3d_w(rr, minimum, maximum, numbins, uselog, x_rand, y_rand, z_rand, w_rand,
+          &partition_begin_rr, &partition_end_rr, &part_begin_rr_i, &part_begin_rr_j,
+          &part_end_rr_i, &part_end_rr_j, &prefix);
+      }
     }
     else if(mode == "tomo"){
-      get_mpi_dd_tomo(rr, minimum, maximum, numbins, uselog, phi_rand, theta_rand,
-        &partition_begin_rr, &partition_end_rr, &part_begin_rr_i, &part_begin_rr_j,
-        &part_end_rr_i, &part_end_rr_j, &prefix);
+      if(useweight == false){
+        get_mpi_dd_tomo(rr, minimum, maximum, numbins, uselog, phi_rand, theta_rand,
+          &partition_begin_rr, &partition_end_rr, &part_begin_rr_i, &part_begin_rr_j,
+          &part_end_rr_i, &part_end_rr_j, &prefix);
+      }
+      else{
+        get_mpi_dd_tomo_w(rr, minimum, maximum, numbins, uselog, phi_rand, theta_rand, w_rand,
+          &partition_begin_rr, &partition_end_rr, &part_begin_rr_i, &part_begin_rr_j,
+          &part_end_rr_i, &part_end_rr_j, &prefix);
+      }
     }
   }
 
