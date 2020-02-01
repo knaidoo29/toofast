@@ -91,11 +91,12 @@ class TwoPoint:
             self.mode_data = None
 
     def add_rand(self, x=None, y=None, z=None, phi=None, theta=None, weight=None):
-        print("useweight is true but weights have not been assigned, assigning weights to 1.")
-        if x is not None:
-            weight = np.ones(len(x))
-        elif phi is not None:
-            weight = np.ones(len(phi))
+        if self.useweight is True and weight is None:
+            print("useweight is true but weights have not been assigned, assigning weights to 1.")
+            if x is not None:
+                weight = np.ones(len(x))
+            elif phi is not None:
+                weight = np.ones(len(phi))
         if x is not None and y is not None and z is None and phi is None and theta is None:
             self.mode_rand = '2D'
             if self.identifier is None:
