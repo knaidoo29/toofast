@@ -173,7 +173,7 @@ class TwoPoint:
         mode = self.mode_data
         write.write_paramfile(data_fname, rand_fname, out_fname, param_fname, mode,
                               self.calc_DD, self.calc_DR, self.calc_RR, self.calc_xi,
-                              self.uselog, self.useweight, self.minimum, self.maximum, self.numbins)
+                              self.uselog, self.useweight, self.minimum, self.maximum, self.numbins, self.mu_bins)
         mpirun, twopoint, twopoint_mpi = source.get_src(location)
         if processors == 1:
             subprocess.call(twopoint + " " +param_fname, shell=True)
