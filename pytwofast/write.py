@@ -3,7 +3,7 @@ import subprocess
 
 
 def write_paramfile(data_fname, rand_fname, out_fname, param_fname, mode, calc_DD,
-                    calc_DR, calc_RR, calc_xi, uselog, useweight, minimum, maximum, numbins):
+                    calc_DR, calc_RR, calc_xi, uselog, useweight, minimum, maximum, numbins, mu_bins):
     """
     Writes a parameter file to be read by twofast.
 
@@ -37,6 +37,8 @@ def write_paramfile(data_fname, rand_fname, out_fname, param_fname, mode, calc_D
         Maximum distance.
     numbins : int
         Number of bins to use for auto and cross pair counts.
+    mu_bins : int
+        Number of bins for multipole expansion of two point.
     """
     subprocess.call('touch '+param_fname, shell=True)
     paramfile = open(param_fname, 'w')
@@ -77,4 +79,5 @@ def write_paramfile(data_fname, rand_fname, out_fname, param_fname, mode, calc_D
     paramfile.write("minimum         "+str(minimum)+" %\n")
     paramfile.write("maximum         "+str(maximum)+" %\n")
     paramfile.write("numbins         "+str(numbins)+" %\n")
+    paramfile.write("mu_bins         "+str(mu_bins)+" %\n")
     paramfile.close()

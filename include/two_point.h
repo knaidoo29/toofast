@@ -58,6 +58,21 @@ void get_dr_tomo_w(vector<double> &dr,double minimum, double maximum, int numbin
   vector<double> &phi_data, vector<double> &theta_data, vector<double> &phi_rand, vector<double> &theta_rand,
   vector<double> &w_data, vector<double> &w_rand);
 
+void get_dd_poly(vector<double> &dd, double minimum, double maximum, int numbins, int mu_bins, bool uselog,
+  vector<double> &x, vector<double> &y, vector<double> &z);
+
+void get_dd_poly_w(vector<double> &dd, double minimum, double maximum, int numbins, int mu_bins, bool uselog,
+  vector<double> &x, vector<double> &y, vector<double> &z, vector<double> &w);
+
+void get_dr_poly(vector<double> &dr, double minimum, double maximum, int numbins, int mu_bins, bool uselog,
+  vector<double> &x_data, vector<double> &y_data, vector<double> &z_data,
+  vector<double> &x_rand, vector<double> &y_rand, vector<double> &z_rand);
+
+void get_dr_poly_w(vector<double> &dr, double minimum, double maximum, int numbins, int mu_bins, bool uselog,
+  vector<double> &x_data, vector<double> &y_data, vector<double> &z_data,
+  vector<double> &x_rand, vector<double> &y_rand, vector<double> &z_rand,
+  vector<double> &w_data, vector<double> &w_rand);
+
 void get_mpi_dd_2d(vector<double> &dd, double minimum, double maximum, int numbins, bool uselog,
   vector<double> &x, vector<double> &y, long int *partition_begin, long int *partition_end,
   long int *partition_begin_i, long int *partition_begin_j, long int *partition_end_i,
@@ -113,5 +128,25 @@ void get_mpi_dr_tomo(vector<double> &dr, double minimum, double maximum, int num
 void get_mpi_dr_tomo_w(vector<double> &dr, double minimum, double maximum, int numbins, bool uselog,
   vector<double> &phi_data, vector<double> &theta_data, vector<double> &phi_rand, vector<double> &theta_rand,
   vector<double> &w_data, vector<double> &w_rand, long int *partition_begin, long int *partition_end, string *prefix);
+
+void get_mpi_dd_poly(vector<double> &dd, double minimum, double maximum, int numbins, int mu_bins, bool uselog,
+  vector<double> &x, vector<double> &y, vector<double> &z, long int *partition_begin,
+  long int *partition_end, long int *partition_begin_i, long int *partition_begin_j,
+  long int *partition_end_i, long int *partition_end_j, string *prefix);
+
+void get_mpi_dd_poly_w(vector<double> &dd, double minimum, double maximum, int numbins, int mu_bins, bool uselog,
+  vector<double> &x, vector<double> &y, vector<double> &z, vector<double> &w, long int *partition_begin,
+  long int *partition_end, long int *partition_begin_i, long int *partition_begin_j,
+  long int *partition_end_i, long int *partition_end_j, string *prefix);
+
+void get_mpi_dr_poly(vector<double> &dr, double minimum, double maximum, int numbins, int mu_bins, bool uselog,
+  vector<double> &x_data, vector<double> &y_data, vector<double> &z_data,
+  vector<double> &x_rand, vector<double> &y_rand, vector<double> &z_rand,
+  long int *partition_begin, long int *partition_end, string *prefix);
+
+void get_mpi_dr_poly_w(vector<double> &dr, double minimum, double maximum, int numbins, int mu_bins, bool uselog,
+  vector<double> &x_data, vector<double> &y_data, vector<double> &z_data,
+  vector<double> &x_rand, vector<double> &y_rand, vector<double> &z_rand, vector<double> &w_data, vector<double> &w_rand,
+  long int *partition_begin, long int *partition_end, string *prefix);
 
 //#endif

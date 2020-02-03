@@ -13,6 +13,7 @@ class TwoPoint:
         self.minimum = None
         self.maximum = None
         self.numbins = None
+        self.mu_bins = None
         self.calc_DD = None
         self.calc_DR = None
         self.calc_RR = None
@@ -21,11 +22,12 @@ class TwoPoint:
         self.useweight = None
         self.identifier = None
 
-    def setup(self, minimum, maximum, numbins, calc_DD=True, calc_DR=True,
+    def setup(self, minimum, maximum, numbins, mu_bins=10, calc_DD=True, calc_DR=True,
               calc_RR=True, calc_xi=True, uselog=False, useweight=False, identifier=None):
         self.minimum = minimum
         self.maximum = maximum
         self.numbins = numbins
+        self.mu_bins = mu_bins
         self.calc_DD = calc_DD
         self.calc_DR = calc_DR
         self.calc_RR = calc_RR
@@ -146,7 +148,9 @@ class TwoPoint:
         else:
             self.mode_rand = None
 
-    def run(self, output_fname, location='home', processors=4):
+    def run(self, output_fname, location='home', processors=4, outmultipole=False):
+        if outmultipole is True:
+            self.mode = "poly"
         if self.mode_data is not None:
             if self.identifier is None:
                 data_fname = self.path + "temp_data.txt"

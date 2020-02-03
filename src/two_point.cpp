@@ -758,6 +758,267 @@ void get_dr_tomo_w(vector<double> &dr, double minimum, double maximum, int numbi
   }
 }
 
+void get_dd_poly(vector<double> &dd, double minimum, double maximum, int numbins, int mu_bins, bool uselog,
+  vector<double> &x, vector<double> &y, vector<double> &z){
+  /* Function for parallelised auto pair distance counts. Only takes unique pairs, i.e. i, j when j < i.
+
+  Parameters
+  ----------
+  dd : vector
+    Vector of auto pair counts.
+  minimum : double
+    The minimum for the distance between pairs to be binned.
+  maximum : double
+    The maximum for the distance between pairs to be binned.
+  numbins : int
+    Number of bins for the data to be binned in.
+  mu_bins : int
+    Number of bins for mu=cos(theta)
+  uselog : bool
+    Determines whether to use log bins or not.
+  x, y, z : vector
+    3D coordinate positions.
+  */
+  long int k = 0, kmax, ind, mu_ind;
+  double dx, log10min, log10max, log10dx, dist, dmu;
+  double mu1, mu2, rx, ry, rz;
+
+  dmu = 1./((float)(mu_bins));
+  dx = (maximum - minimum)/((float)(numbins));
+  log10min = log10(minimum);
+  log10max = log10(maximum);
+  log10dx = (log10max - log10min)/((float)(numbins));
+
+  kmax = x.size()*(x.size()-1)/2;
+
+  for(long int i = 1; i < x.size(); i++){
+    for(long int j = 0; j < i; j++){
+      dist = get_distance_3d(x[i], y[i], z[i], x[j], y[j], z[j]);
+      rx = x[j]-x[i];
+      ry = y[j]-y[i];
+      rz = z[j]-z[i];
+      mu1 = (x[i]*rx + y[i]*ry + z[i]*rz)/(pow(pow(x[i], 2.)+pow(y[i], 2.)+pow(z[i], 2.), 0.5)*pow(pow(rx, 2.)+pow(ry, 2.)+pow(rz, 2.), 0.5));
+      mu2 = (x[j]*rx + y[j]*ry + z[j]*rz)/(pow(pow(x[j], 2.)+pow(y[j], 2.)+pow(z[j], 2.), 0.5)*pow(pow(rx, 2.)+pow(ry, 2.)+pow(rz, 2.), 0.5));
+      mu1 = abs(mu1);
+      mu2 = abs(mu2);
+      if (dist >= minimum and dist <= maximum){
+        if(uselog == true){
+          ind = floor((log10(dist) - log10min)/log10dx);
+        }
+        else{
+          ind = floor((dist - minimum)/dx);
+        }
+        mu_ind = floor(mu1/dmu);
+        dd[mu_ind*numbins + ind] = dd[mu_ind*numbins + ind] + 1.;
+        mu_ind = floor(mu2/dmu);
+        dd[mu_ind*numbins + ind] = dd[mu_ind*numbins + ind] + 1.;
+      }
+      k += 1;
+      if(k % (kmax/10) == 0){
+        cout << "Auto Pairs = " << k/(kmax/10) << '/' << 10 << endl;
+      }
+    }
+  }
+}
+
+void get_dd_poly_w(vector<double> &dd, double minimum, double maximum, int numbins, int mu_bins, bool uselog,
+  vector<double> &x, vector<double> &y, vector<double> &z, vector<double> &w){
+  /* Function for parallelised auto pair distance counts. Only takes unique pairs, i.e. i, j when j < i.
+
+  Parameters
+  ----------
+  dd : vector
+    Vector of auto pair counts.
+  minimum : double
+    The minimum for the distance between pairs to be binned.
+  maximum : double
+    The maximum for the distance between pairs to be binned.
+  numbins : int
+    Number of bins for the data to be binned in.
+  mu_bins : int
+    Number of bins for mu=cos(theta)
+  uselog : bool
+    Determines whether to use log bins or not.
+  x, y, z : vector
+    3D coordinate positions.
+  w : vector
+    Weights.
+  */
+  long int k = 0, kmax, ind, mu_ind;
+  double dx, log10min, log10max, log10dx, dist, dmu;
+  double mu1, mu2, rx, ry, rz;
+
+  dmu = 1./((float)(mu_bins));
+  dx = (maximum - minimum)/((float)(numbins));
+  log10min = log10(minimum);
+  log10max = log10(maximum);
+  log10dx = (log10max - log10min)/((float)(numbins));
+
+  kmax = x.size()*(x.size()-1)/2;
+
+  for(long int i = 1; i < x.size(); i++){
+    for(long int j = 0; j < i; j++){
+      dist = get_distance_3d(x[i], y[i], z[i], x[j], y[j], z[j]);
+      rx = x[j]-x[i];
+      ry = y[j]-y[i];
+      rz = z[j]-z[i];
+      mu1 = (x[i]*rx + y[i]*ry + z[i]*rz)/(pow(pow(x[i], 2.)+pow(y[i], 2.)+pow(z[i], 2.), 0.5)*pow(pow(rx, 2.)+pow(ry, 2.)+pow(rz, 2.), 0.5));
+      mu2 = (x[j]*rx + y[j]*ry + z[j]*rz)/(pow(pow(x[j], 2.)+pow(y[j], 2.)+pow(z[j], 2.), 0.5)*pow(pow(rx, 2.)+pow(ry, 2.)+pow(rz, 2.), 0.5));
+      mu1 = abs(mu1);
+      mu2 = abs(mu2);
+      if (dist >= minimum and dist <= maximum){
+        if(uselog == true){
+          ind = floor((log10(dist) - log10min)/log10dx);
+        }
+        else{
+          ind = floor((dist - minimum)/dx);
+        }
+        mu_ind = floor(mu1/dmu);
+        dd[mu_ind*numbins + ind] = dd[mu_ind*numbins + ind] + w[i]*w[j];
+        mu_ind = floor(mu2/dmu);
+        dd[mu_ind*numbins + ind] = dd[mu_ind*numbins + ind] + w[i]*w[j];
+      }
+      k += 1;
+      if(k % (kmax/10) == 0){
+        cout << "Auto Pairs = " << k/(kmax/10) << '/' << 10 << endl;
+      }
+    }
+  }
+}
+
+void get_dr_poly(vector<double> &dr, double minimum, double maximum, int numbins, int mu_bins, bool uselog,
+  vector<double> &x_data, vector<double> &y_data, vector<double> &z_data,
+  vector<double> &x_rand, vector<double> &y_rand, vector<double> &z_rand){
+  /* Function for parallelised auto pair distance counts. Only takes unique pairs, i.e. i, j when j < i.
+
+  Parameters
+  ----------
+  dr : vector
+    Vector of cross pair counts.
+  minimum : double
+    The minimum for the distance between pairs to be binned.
+  maximum : double
+    The maximum for the distance between pairs to be binned.
+  numbins : int
+    Number of bins for the data to be binned in.
+  mu_bins : int
+    Number of bins for mu=cos(theta)
+  uselog : bool
+    Determines whether to use log bins or not.
+  x_data, y_data, z_data : vector
+    3D coordinate positions of the data.
+  x_rand, y_rand, z_rand : vector
+    3D coordinate positions of the randoms.
+  */
+  long int ind, mu_ind;
+  double dx, log10min, log10max, log10dx, dist, dmu;
+  double mu1, mu2, rx, ry, rz;
+
+  dmu = 1./((float)(mu_bins));
+  dx = (maximum - minimum)/((float)(numbins));
+  log10min = log10(minimum);
+  log10max = log10(maximum);
+  log10dx = (log10max - log10min)/((float)(numbins));
+
+  for(long int i = 0; i < x_data.size(); i++){
+    for(long int j = 0; j < x_rand.size(); j++){
+      dist = get_distance_3d(x_data[i], y_data[i], z_data[i], x_rand[j], y_rand[j], z_rand[j]);
+      rx = x_rand[j]-x_data[i];
+      ry = y_rand[j]-y_data[i];
+      rz = z_rand[j]-z_data[i];
+      mu1 = (x_data[i]*rx + y_data[i]*ry + z_data[i]*rz)/(pow(pow(x_data[i], 2.)+pow(y_data[i], 2.)+pow(z_data[i], 2.), 0.5)*pow(pow(rx, 2.)+pow(ry, 2.)+pow(rz, 2.), 0.5));
+      mu2 = (x_rand[j]*rx + y_rand[j]*ry + z_rand[j]*rz)/(pow(pow(x_rand[j], 2.)+pow(y_rand[j], 2.)+pow(z_rand[j], 2.), 0.5)*pow(pow(rx, 2.)+pow(ry, 2.)+pow(rz, 2.), 0.5));
+      mu1 = abs(mu1);
+      mu2 = abs(mu2);
+      if (dist >= minimum and dist <= maximum){
+        if(uselog == true){
+          ind = floor((log10(dist) - log10min)/log10dx);
+        }
+        else{
+          ind = floor((dist - minimum)/dx);
+        }
+        mu_ind = floor(mu1/dmu);
+        dr[mu_ind*numbins + ind] = dr[mu_ind*numbins + ind] + 1.;
+        mu_ind = floor(mu2/dmu);
+        dr[mu_ind*numbins + ind] = dr[mu_ind*numbins + ind] + 1.;
+      }
+    }
+    if(i % ((x_data.size())/10) == 0){
+      if(i/((x_data.size())/10) != 0){
+        cout << "Cross Pairs = " << i/((x_data.size())/10) << '/' << 10 << endl;
+      }
+    }
+  }
+}
+
+void get_dr_poly_w(vector<double> &dr, double minimum, double maximum, int numbins, int mu_bins, bool uselog,
+  vector<double> &x_data, vector<double> &y_data, vector<double> &z_data,
+  vector<double> &x_rand, vector<double> &y_rand, vector<double> &z_rand,
+  vector<double> &w_data, vector<double> &w_rand){
+  /* Function for parallelised auto pair distance counts. Only takes unique pairs, i.e. i, j when j < i.
+
+  Parameters
+  ----------
+  dr : vector
+    Vector of cross pair counts.
+  minimum : double
+    The minimum for the distance between pairs to be binned.
+  maximum : double
+    The maximum for the distance between pairs to be binned.
+  numbins : int
+    Number of bins for the data to be binned in.
+  mu_bins : int
+    Number of bins for mu=cos(theta)
+  uselog : bool
+    Determines whether to use log bins or not.
+  x_data, y_data, z_data : vector
+    3D coordinate positions of the data.
+  x_rand, y_rand, z_rand : vector
+    3D coordinate positions of the randoms.
+  w_data, w_rand : vector
+    Weights.
+  */
+  long int ind, mu_ind;
+  double dx, log10min, log10max, log10dx, dist, dmu;
+  double mu1, mu2, rx, ry, rz;
+
+  dmu = 1./((float)(mu_bins));
+  dx = (maximum - minimum)/((float)(numbins));
+  log10min = log10(minimum);
+  log10max = log10(maximum);
+  log10dx = (log10max - log10min)/((float)(numbins));
+
+  for(long int i = 0; i < x_data.size(); i++){
+    for(long int j = 0; j < x_rand.size(); j++){
+      dist = get_distance_3d(x_data[i], y_data[i], z_data[i], x_rand[j], y_rand[j], z_rand[j]);
+      rx = x_rand[j]-x_data[i];
+      ry = y_rand[j]-y_data[i];
+      rz = z_rand[j]-z_data[i];
+      mu1 = (x_data[i]*rx + y_data[i]*ry + z_data[i]*rz)/(pow(pow(x_data[i], 2.)+pow(y_data[i], 2.)+pow(z_data[i], 2.), 0.5)*pow(pow(rx, 2.)+pow(ry, 2.)+pow(rz, 2.), 0.5));
+      mu2 = (x_rand[j]*rx + y_rand[j]*ry + z_rand[j]*rz)/(pow(pow(x_rand[j], 2.)+pow(y_rand[j], 2.)+pow(z_rand[j], 2.), 0.5)*pow(pow(rx, 2.)+pow(ry, 2.)+pow(rz, 2.), 0.5));
+      mu1 = abs(mu1);
+      mu2 = abs(mu2);
+      if (dist >= minimum and dist <= maximum){
+        if(uselog == true){
+          ind = floor((log10(dist) - log10min)/log10dx);
+        }
+        else{
+          ind = floor((dist - minimum)/dx);
+        }
+        mu_ind = floor(mu1/dmu);
+        dr[mu_ind*numbins + ind] = dr[mu_ind*numbins + ind] + w_data[i]*w_rand[j];
+        mu_ind = floor(mu2/dmu);
+        dr[mu_ind*numbins + ind] = dr[mu_ind*numbins + ind] + w_data[i]*w_rand[j];
+      }
+    }
+    if(i % ((x_data.size())/10) == 0){
+      if(i/((x_data.size())/10) != 0){
+        cout << "Cross Pairs = " << i/((x_data.size())/10) << '/' << 10 << endl;
+      }
+    }
+  }
+}
+
 void get_mpi_dd_2d(vector<double> &dd, double minimum, double maximum, int numbins, bool uselog,
   vector<double> &x, vector<double> &y, long int *partition_begin, long int *partition_end,
   long int *partition_begin_i, long int *partition_begin_j, long int *partition_end_i,
@@ -1654,6 +1915,358 @@ void get_mpi_dr_tomo_w(vector<double> &dr, double minimum, double maximum, int n
           ind = floor((dist - minimum)/dx);
         }
         dr[ind] = dr[ind] + w_data[i]*w_rand[j];
+      }
+    }
+    if((i - *partition_begin) % ((*partition_end - *partition_begin)/10) == 0){
+      if((i - *partition_begin)/((*partition_end - *partition_begin)/10) != 0){
+        cout << *prefix << "Cross Pairs = " << (i - *partition_begin)/((*partition_end - *partition_begin)/10) << '/' << 10 << endl;
+      }
+    }
+  }
+}
+
+void get_mpi_dd_poly(vector<double> &dd, double minimum, double maximum, int numbins, int mu_bins, bool uselog,
+  vector<double> &x, vector<double> &y, vector<double> &z, long int *partition_begin,
+  long int *partition_end, long int *partition_begin_i, long int *partition_begin_j,
+  long int *partition_end_i, long int *partition_end_j, string *prefix){
+  /* Function for parallelised auto pair distance counts. Only takes unique pairs, i.e. i, j when j < i.
+
+  Parameters
+  ----------
+  dd : vector
+    Vector of auto pair counts.
+  minimum : double
+    The minimum for the distance between pairs to be binned.
+  maximum : double
+    The maximum for the distance between pairs to be binned.
+  numbins : int
+    Number of bins for the data to be binned in.
+  mu_bins : int
+    Number of mu bins.
+  uselog : bool
+    Determines whether to use log bins or not.
+  x, y, z : vector
+    3D coordinate positions.
+  partition_begin : long int
+    Beginning of total partition count.
+  partition_end : long int
+    End of total partition count.
+  partition_being_i, partition_begin_j : long int
+    Index for rows and columns beginnings.
+  partition_end_i, partition_end_j : long int
+    Index for rows and columns endings.
+  prefix : string
+    Prefix to be printed to show 10% progress.
+  */
+  long int k = 0, ind, mu_ind;
+  double dx, log10min, log10max, log10dx, dist, dmu;
+  double mu1, mu2, rx, ry, rz;
+
+  dmu = 1./((float)(mu_bins));
+  dx = (maximum - minimum)/((double)(numbins));
+  log10min = log10(minimum);
+  log10max = log10(maximum);
+  log10dx = (log10max - log10min)/((double)(numbins));
+
+  long int j_start, j_end;
+
+  double part_total = (double) (*partition_end - *partition_begin);
+
+  long int _part_total, _temp_begin, _temp_end;
+
+  _temp_begin = (*partition_begin_i+1)*(*partition_begin_i)/2;
+  _temp_end = (*partition_end_i+1)*(*partition_end_i)/2;
+
+  _temp_begin -= *partition_begin_i - *partition_begin_j + 1;
+  _temp_end -= *partition_end_i - *partition_end_j;
+
+  _part_total = _temp_end - _temp_begin;
+
+  for(long int i = *partition_begin_i; i <= *partition_end_i; i++){
+    if((i == *partition_begin_i) && (i == *partition_end_i)){
+      j_start = *partition_begin_j;
+      j_end = *partition_end_j;
+    }
+    else if(i == *partition_begin_i){
+      j_start = *partition_begin_j;
+      j_end = i-1;
+    }
+    else if(i == *partition_end_i){
+      j_start = 0;
+      j_end = *partition_end_j;
+    }
+    else{
+      j_start = 0;
+      j_end = i-1;
+    }
+    for(long int j = j_start; j <= j_end; j++){
+      dist = get_distance_3d(x[i], y[i], z[i], x[j], y[j], z[j]);
+      rx = x[j]-x[i];
+      ry = y[j]-y[i];
+      rz = z[j]-z[i];
+      mu1 = (x[i]*rx + y[i]*ry + z[i]*rz)/(pow(pow(x[i], 2.)+pow(y[i], 2.)+pow(z[i], 2.), 0.5)*pow(pow(rx, 2.)+pow(ry, 2.)+pow(rz, 2.), 0.5));
+      mu2 = (x[j]*rx + y[j]*ry + z[j]*rz)/(pow(pow(x[j], 2.)+pow(y[j], 2.)+pow(z[j], 2.), 0.5)*pow(pow(rx, 2.)+pow(ry, 2.)+pow(rz, 2.), 0.5));
+      mu1 = abs(mu1);
+      mu2 = abs(mu2);
+      if (dist >= minimum and dist <= maximum){
+        if(uselog == true){
+          ind = floor((log10(dist) - log10min)/log10dx);
+        }
+        else{
+          ind = floor((dist - minimum)/dx);
+        }
+        mu_ind = floor(mu1/dmu);
+        dd[mu_ind*numbins + ind] = dd[mu_ind*numbins + ind] + 1.;
+        mu_ind = floor(mu2/dmu);
+        dd[mu_ind*numbins + ind] = dd[mu_ind*numbins + ind] + 1.;
+      }
+      k += 1;
+      if(k % (_part_total/10) == 0){
+        cout << *prefix << "Auto Pairs = " << k/(_part_total/10) << '/' << 10 << endl;
+      }
+    }
+  }
+}
+
+void get_mpi_dd_poly_w(vector<double> &dd, double minimum, double maximum, int numbins, int mu_bins, bool uselog,
+  vector<double> &x, vector<double> &y, vector<double> &z, vector<double> &w, long int *partition_begin,
+  long int *partition_end, long int *partition_begin_i, long int *partition_begin_j,
+  long int *partition_end_i, long int *partition_end_j, string *prefix){
+  /* Function for parallelised auto pair distance counts. Only takes unique pairs, i.e. i, j when j < i.
+
+  Parameters
+  ----------
+  dd : vector
+    Vector of auto pair counts.
+  minimum : double
+    The minimum for the distance between pairs to be binned.
+  maximum : double
+    The maximum for the distance between pairs to be binned.
+  numbins : int
+    Number of bins for the data to be binned in.
+  mu_bins : int
+    Number of mu bins.
+  uselog : bool
+    Determines whether to use log bins or not.
+  x, y, z : vector
+    3D coordinate positions.
+  w : vector
+    Weights.
+  partition_begin : long int
+    Beginning of total partition count.
+  partition_end : long int
+    End of total partition count.
+  partition_being_i, partition_begin_j : long int
+    Index for rows and columns beginnings.
+  partition_end_i, partition_end_j : long int
+    Index for rows and columns endings.
+  prefix : string
+    Prefix to be printed to show 10% progress.
+  */
+  long int k = 0, ind, mu_ind;
+  double dx, log10min, log10max, log10dx, dist, dmu;
+  double mu1, mu2, rx, ry, rz;
+
+  dmu = 1./((float)(mu_bins));
+  dx = (maximum - minimum)/((double)(numbins));
+  log10min = log10(minimum);
+  log10max = log10(maximum);
+  log10dx = (log10max - log10min)/((double)(numbins));
+
+  long int j_start, j_end;
+
+  double part_total = (double) (*partition_end - *partition_begin);
+
+  long int _part_total, _temp_begin, _temp_end;
+
+  _temp_begin = (*partition_begin_i+1)*(*partition_begin_i)/2;
+  _temp_end = (*partition_end_i+1)*(*partition_end_i)/2;
+
+  _temp_begin -= *partition_begin_i - *partition_begin_j + 1;
+  _temp_end -= *partition_end_i - *partition_end_j;
+
+  _part_total = _temp_end - _temp_begin;
+
+  for(long int i = *partition_begin_i; i <= *partition_end_i; i++){
+    if((i == *partition_begin_i) && (i == *partition_end_i)){
+      j_start = *partition_begin_j;
+      j_end = *partition_end_j;
+    }
+    else if(i == *partition_begin_i){
+      j_start = *partition_begin_j;
+      j_end = i-1;
+    }
+    else if(i == *partition_end_i){
+      j_start = 0;
+      j_end = *partition_end_j;
+    }
+    else{
+      j_start = 0;
+      j_end = i-1;
+    }
+    for(long int j = j_start; j <= j_end; j++){
+      dist = get_distance_3d(x[i], y[i], z[i], x[j], y[j], z[j]);
+      rx = x[j]-x[i];
+      ry = y[j]-y[i];
+      rz = z[j]-z[i];
+      mu1 = (x[i]*rx + y[i]*ry + z[i]*rz)/(pow(pow(x[i], 2.)+pow(y[i], 2.)+pow(z[i], 2.), 0.5)*pow(pow(rx, 2.)+pow(ry, 2.)+pow(rz, 2.), 0.5));
+      mu2 = (x[j]*rx + y[j]*ry + z[j]*rz)/(pow(pow(x[j], 2.)+pow(y[j], 2.)+pow(z[j], 2.), 0.5)*pow(pow(rx, 2.)+pow(ry, 2.)+pow(rz, 2.), 0.5));
+      mu1 = abs(mu1);
+      mu2 = abs(mu2);
+      if (dist >= minimum and dist <= maximum){
+        if(uselog == true){
+          ind = floor((log10(dist) - log10min)/log10dx);
+        }
+        else{
+          ind = floor((dist - minimum)/dx);
+        }
+        mu_ind = floor(mu1/dmu);
+        dd[mu_ind*numbins + ind] = dd[mu_ind*numbins + ind] + w[i]*w[j];
+        mu_ind = floor(mu2/dmu);
+        dd[mu_ind*numbins + ind] = dd[mu_ind*numbins + ind] + w[i]*w[j];
+      }
+      k += 1;
+      if(k % (_part_total/10) == 0){
+        cout << *prefix << "Auto Pairs = " << k/(_part_total/10) << '/' << 10 << endl;
+      }
+    }
+  }
+}
+
+void get_mpi_dr_poly(vector<double> &dr, double minimum, double maximum, int numbins, int mu_bins, bool uselog,
+  vector<double> &x_data, vector<double> &y_data, vector<double> &z_data,
+  vector<double> &x_rand, vector<double> &y_rand, vector<double> &z_rand,
+  long int *partition_begin, long int *partition_end, string *prefix){
+  /* Function for parallelised auto pair distance counts. Only takes unique pairs, i.e. i, j when j < i.
+
+  Parameters
+  ----------
+  dr : vector
+    Vector of cross pair counts.
+  minimum : double
+    The minimum for the distance between pairs to be binned.
+  maximum : double
+    The maximum for the distance between pairs to be binned.
+  numbins : int
+    Number of bins for the data to be binned in.
+  mu_bins : int
+    Number of mu bins.
+  uselog : bool
+    Determines whether to use log bins or not.
+  x_data, y_data, z_data : vector
+    3D coordinate positions of the data.
+  x_rand, y_rand, z_rand : vector
+    3D coordinate positions of the randoms.
+  partition_begin : long int
+    Beginning of total partition count.
+  partition_end : long int
+    End of total partition count.
+  prefix : string
+    Prefix to be printed to show 10% progress.
+  */
+  long int ind, mu_ind;
+  double dx, log10min, log10max, log10dx, dist, dmu;
+  double mu1, mu2, rx, ry, rz;
+
+  dmu = 1./((float)(mu_bins));
+  dx = (maximum - minimum)/((float)(numbins));
+  log10min = log10(minimum);
+  log10max = log10(maximum);
+  log10dx = (log10max - log10min)/((float)(numbins));
+
+  for(long int i = *partition_begin; i < *partition_end; i++){
+    for(long int j = 0; j < x_rand.size(); j++){
+      dist = get_distance_3d(x_data[i], y_data[i], z_data[i], x_rand[j], y_rand[j], z_rand[j]);
+      rx = x_data[j]-x_rand[i];
+      ry = y_data[j]-y_rand[i];
+      rz = z_data[j]-z_rand[i];
+      mu1 = (x_data[i]*rx + y_data[i]*ry + z_data[i]*rz)/(pow(pow(x_data[i], 2.)+pow(y_data[i], 2.)+pow(z_data[i], 2.), 0.5)*pow(pow(rx, 2.)+pow(ry, 2.)+pow(rz, 2.), 0.5));
+      mu2 = (x_rand[j]*rx + y_rand[j]*ry + z_rand[j]*rz)/(pow(pow(x_rand[j], 2.)+pow(y_rand[j], 2.)+pow(z_rand[j], 2.), 0.5)*pow(pow(rx, 2.)+pow(ry, 2.)+pow(rz, 2.), 0.5));
+      mu1 = abs(mu1);
+      mu2 = abs(mu2);
+      if (dist >= minimum and dist <= maximum){
+        if(uselog == true){
+          ind = floor((log10(dist) - log10min)/log10dx);
+        }
+        else{
+          ind = floor((dist - minimum)/dx);
+        }
+        mu_ind = floor(mu1/dmu);
+        dr[mu_ind*numbins + ind] = dr[mu_ind*numbins + ind] + 1.;
+        mu_ind = floor(mu2/dmu);
+        dr[mu_ind*numbins + ind] = dr[mu_ind*numbins + ind] + 1.;
+      }
+    }
+    if((i - *partition_begin) % ((*partition_end - *partition_begin)/10) == 0){
+      if((i - *partition_begin)/((*partition_end - *partition_begin)/10) != 0){
+        cout << *prefix << "Cross Pairs = " << (i - *partition_begin)/((*partition_end - *partition_begin)/10) << '/' << 10 << endl;
+      }
+    }
+  }
+}
+
+void get_mpi_dr_poly_w(vector<double> &dr, double minimum, double maximum, int numbins, int mu_bins, bool uselog,
+  vector<double> &x_data, vector<double> &y_data, vector<double> &z_data,
+  vector<double> &x_rand, vector<double> &y_rand, vector<double> &z_rand, vector<double> &w_data, vector<double> &w_rand,
+  long int *partition_begin, long int *partition_end, string *prefix){
+  /* Function for parallelised auto pair distance counts. Only takes unique pairs, i.e. i, j when j < i.
+
+  Parameters
+  ----------
+  dr : vector
+    Vector of cross pair counts.
+  minimum : double
+    The minimum for the distance between pairs to be binned.
+  maximum : double
+    The maximum for the distance between pairs to be binned.
+  numbins : int
+    Number of bins for the data to be binned in.
+  mu_bins : int
+    Number of mu bins.
+  uselog : bool
+    Determines whether to use log bins or not.
+  x_data, y_data, z_data : vector
+    3D coordinate positions of the data.
+  x_rand, y_rand, z_rand : vector
+    3D coordinate positions of the randoms.
+  partition_begin : long int
+    Beginning of total partition count.
+  partition_end : long int
+    End of total partition count.
+  prefix : string
+    Prefix to be printed to show 10% progress.
+  */
+  long int ind, mu_ind;
+  double dx, log10min, log10max, log10dx, dist, dmu;
+  double mu1, mu2, rx, ry, rz;
+
+  dmu = 1./((float)(mu_bins));
+  dx = (maximum - minimum)/((float)(numbins));
+  log10min = log10(minimum);
+  log10max = log10(maximum);
+  log10dx = (log10max - log10min)/((float)(numbins));
+
+  for(long int i = *partition_begin; i < *partition_end; i++){
+    for(long int j = 0; j < x_rand.size(); j++){
+      dist = get_distance_3d(x_data[i], y_data[i], z_data[i], x_rand[j], y_rand[j], z_rand[j]);
+      rx = x_data[j]-x_rand[i];
+      ry = y_data[j]-y_rand[i];
+      rz = z_data[j]-z_rand[i];
+      mu1 = (x_data[i]*rx + y_data[i]*ry + z_data[i]*rz)/(pow(pow(x_data[i], 2.)+pow(y_data[i], 2.)+pow(z_data[i], 2.), 0.5)*pow(pow(rx, 2.)+pow(ry, 2.)+pow(rz, 2.), 0.5));
+      mu2 = (x_rand[j]*rx + y_rand[j]*ry + z_rand[j]*rz)/(pow(pow(x_rand[j], 2.)+pow(y_rand[j], 2.)+pow(z_rand[j], 2.), 0.5)*pow(pow(rx, 2.)+pow(ry, 2.)+pow(rz, 2.), 0.5));
+      mu1 = abs(mu1);
+      mu2 = abs(mu2);
+      if (dist >= minimum and dist <= maximum){
+        if(uselog == true){
+          ind = floor((log10(dist) - log10min)/log10dx);
+        }
+        else{
+          ind = floor((dist - minimum)/dx);
+        }
+        mu_ind = floor(mu1/dmu);
+        dr[mu_ind*numbins + ind] = dr[mu_ind*numbins + ind] + w_data[i]*w_rand[j];
+        mu_ind = floor(mu2/dmu);
+        dr[mu_ind*numbins + ind] = dr[mu_ind*numbins + ind] + w_data[i]*w_rand[j];
       }
     }
     if((i - *partition_begin) % ((*partition_end - *partition_begin)/10) == 0){
