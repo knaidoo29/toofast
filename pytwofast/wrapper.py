@@ -149,8 +149,6 @@ class TwoPoint:
             self.mode_rand = None
 
     def run(self, output_fname, location='home', processors=4, outmultipole=False):
-        if outmultipole is True:
-            self.mode_data = "poly"
         if self.mode_data is not None:
             if self.identifier is None:
                 data_fname = self.path + "temp_data.txt"
@@ -171,6 +169,8 @@ class TwoPoint:
         else:
             param_fname = self.path + "temp_paramfile_"+str(self.identifier)+".ini"
         mode = self.mode_data
+        if outmultipole == True:
+            mode = 'poly'
         write.write_paramfile(data_fname, rand_fname, out_fname, param_fname, mode,
                               self.calc_DD, self.calc_DR, self.calc_RR, self.calc_xi,
                               self.uselog, self.useweight, self.minimum, self.maximum, self.numbins, self.mu_bins)
