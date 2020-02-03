@@ -397,22 +397,28 @@ int main(int argc, char** argv){
     r_len = numbins;
   }
 
-  double r[r_len], mu[r_len];
+  get_r(_r, minimum, maximum, numbins, uselog);
+
+  vector<double>r;
+  vector<double>mu;
 
   if(mode == "poly"){
-    get_r(_r, minimum, maximum, numbins, uselog);
     dmu = 1./((float)mu_bins);
     for(int i = 0; i < mu_bins; i++){
       for(int j = 0; j < numbins; j++){
-        r[i*numbins + j] = _r[j];
-        mu[i*numbins + j] = 0.5*dmu + dmu*i;
+        r.push_back(_r[j]);
+        mu.push_back(0.5*dmu + dmu*i);
       }
     }
   }
   else{
-    get_r(r, minimum, maximum, numbins, uselog);
+    get_r(_r, minimum, maximum, numbins, uselog);
+    for(int j = 0; j < numbins; j++){
+      r.push_back(_r[j]);
+    }
   }
 
+  /*
   Writer wr;
   if(mode == "poly"){
     wr.store(r, numbins*mu_bins, "r");
@@ -445,7 +451,7 @@ int main(int argc, char** argv){
       wr.store(rr, numbins, "RR");
     }
   }
-  /* Should get rid of this or make smarter */
+  // Should get rid of this or make smarter
   if(calc_xi == "yes"){
     vector<double>xi;
     if(mode == "poly"){
@@ -464,6 +470,16 @@ int main(int argc, char** argv){
     }
   }
   wr.write2file(out_file);
+  */
+
+  if(mode == "poly"){
+    writedat(out_file, r.begin(), r.end(), mu.begin(), mu.end(), dd.begin(), dd.end(),
+      dr.begin(), dr.end(), rr.begin(), rr.end());
+  }
+  else{
+    writedat(out_file, r.begin(), r.end(), dd.begin(), dd.end(),
+      dr.begin(), dr.end(), rr.begin(), rr.end());
+  }
 
   prog.end();
 

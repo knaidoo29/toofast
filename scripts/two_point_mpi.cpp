@@ -585,20 +585,24 @@ int main(int argc, char** argv){
     r_len = numbins;
   }
 
-  double r[r_len], mu[r_len];
+  get_r(_r, minimum, maximum, numbins, uselog);
+
+  vector<double>r;
+  vector<double>mu;
 
   if(mode == "poly"){
-    get_r(_r, minimum, maximum, numbins, uselog);
     dmu = 1./((float)mu_bins);
     for(int i = 0; i < mu_bins; i++){
       for(int j = 0; j < numbins; j++){
-        r[i*numbins + j] = _r[j];
-        mu[i*numbins + j] = 0.5*dmu + dmu*i;
+        r.push_back(_r[j]);
+        mu.push_back(0.5*dmu + dmu*i);
       }
     }
   }
   else{
-    get_r(r, minimum, maximum, numbins, uselog);
+    for(int j = 0; j < numbins; j++){
+      r.push_back(_r[j]);
+    }
   }
 
   int dest = 0, tag1 = 0, tag2 = 1, tag3 = 2;
@@ -606,6 +610,7 @@ int main(int argc, char** argv){
     vector<double>dd_total;
     vector<double>dr_total;
     vector<double>rr_total;
+
     for(long int i = 0; i < dd.size(); i++){
       dd_total.push_back(dd[i]);
       dr_total.push_back(dr[i]);
@@ -625,6 +630,8 @@ int main(int argc, char** argv){
         rr_total[i] += rr[i];
       }
     }
+
+    /*
     Writer wr;
     if(mode == "poly"){
       wr.store(r, numbins*mu_bins, "r");
@@ -657,7 +664,7 @@ int main(int argc, char** argv){
         wr.store(rr, numbins, "RR");
       }
     }
-    /* Should get rid of this or make smarter */
+    // Should get rid of this or make smarter
     if(calc_xi == "yes"){
       vector<double>xi;
       if(mode == "poly"){
@@ -676,6 +683,15 @@ int main(int argc, char** argv){
       }
     }
     wr.write2file(out_file);
+    */
+    if(mode == "poly"){
+      writedat(out_file, r.begin(), r.end(), mu.begin(), mu.end(), dd_total.begin(), dd_total.end(),
+        dr_total.begin(), dr_total.end(), rr_total.begin(), rr_total.end());
+    }
+    else{
+      writedat(out_file, r.begin(), r.end(), dd_total.begin(), dd_total.end(),
+        dr_total.begin(), dr_total.end(), rr_total.begin(), rr_total.end());
+    }
   }
   else{
     MPI_Send(&dd[0], dd.size(), MPI_DOUBLE, dest, tag1, MPI_COMM_WORLD);
