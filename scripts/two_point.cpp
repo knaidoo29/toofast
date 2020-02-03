@@ -414,7 +414,6 @@ int main(int argc, char** argv){
   }
 
   Writer wr;
-  wr.add2header("TwoFast Two-Point Output");
   if(mode == "poly"){
     wr.store(r, numbins*mu_bins, "r");
     wr.store(mu, numbins*mu_bins, "mu");

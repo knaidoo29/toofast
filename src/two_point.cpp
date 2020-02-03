@@ -798,6 +798,9 @@ void get_dd_poly(vector<double> &dd, double minimum, double maximum, int numbins
       ry = y[j]-y[i];
       rz = z[j]-z[i];
       mu1 = (x[i]*rx + y[i]*ry + z[i]*rz)/(pow(pow(x[i], 2.)+pow(y[i], 2.)+pow(z[i], 2.), 0.5)*pow(pow(rx, 2.)+pow(ry, 2.)+pow(rz, 2.), 0.5));
+      rx = x[i]-x[j];
+      ry = y[i]-y[j];
+      rz = z[i]-z[j];
       mu2 = (x[j]*rx + y[j]*ry + z[j]*rz)/(pow(pow(x[j], 2.)+pow(y[j], 2.)+pow(z[j], 2.), 0.5)*pow(pow(rx, 2.)+pow(ry, 2.)+pow(rz, 2.), 0.5));
       mu1 = abs(mu1);
       mu2 = abs(mu2);
@@ -863,6 +866,9 @@ void get_dd_poly_w(vector<double> &dd, double minimum, double maximum, int numbi
       ry = y[j]-y[i];
       rz = z[j]-z[i];
       mu1 = (x[i]*rx + y[i]*ry + z[i]*rz)/(pow(pow(x[i], 2.)+pow(y[i], 2.)+pow(z[i], 2.), 0.5)*pow(pow(rx, 2.)+pow(ry, 2.)+pow(rz, 2.), 0.5));
+      rx = x[i]-x[j];
+      ry = y[i]-y[j];
+      rz = z[i]-z[j];
       mu2 = (x[j]*rx + y[j]*ry + z[j]*rz)/(pow(pow(x[j], 2.)+pow(y[j], 2.)+pow(z[j], 2.), 0.5)*pow(pow(rx, 2.)+pow(ry, 2.)+pow(rz, 2.), 0.5));
       mu1 = abs(mu1);
       mu2 = abs(mu2);
@@ -912,7 +918,7 @@ void get_dr_poly(vector<double> &dr, double minimum, double maximum, int numbins
   */
   long int ind, mu_ind;
   double dx, log10min, log10max, log10dx, dist, dmu;
-  double mu1, mu2, rx, ry, rz;
+  double mu, rx, ry, rz;
 
   dmu = 1./((float)(mu_bins));
   dx = (maximum - minimum)/((float)(numbins));
@@ -926,10 +932,8 @@ void get_dr_poly(vector<double> &dr, double minimum, double maximum, int numbins
       rx = x_rand[j]-x_data[i];
       ry = y_rand[j]-y_data[i];
       rz = z_rand[j]-z_data[i];
-      mu1 = (x_data[i]*rx + y_data[i]*ry + z_data[i]*rz)/(pow(pow(x_data[i], 2.)+pow(y_data[i], 2.)+pow(z_data[i], 2.), 0.5)*pow(pow(rx, 2.)+pow(ry, 2.)+pow(rz, 2.), 0.5));
-      mu2 = (x_rand[j]*rx + y_rand[j]*ry + z_rand[j]*rz)/(pow(pow(x_rand[j], 2.)+pow(y_rand[j], 2.)+pow(z_rand[j], 2.), 0.5)*pow(pow(rx, 2.)+pow(ry, 2.)+pow(rz, 2.), 0.5));
-      mu1 = abs(mu1);
-      mu2 = abs(mu2);
+      mu = (x_data[i]*rx + y_data[i]*ry + z_data[i]*rz)/(pow(pow(x_data[i], 2.)+pow(y_data[i], 2.)+pow(z_data[i], 2.), 0.5)*pow(pow(rx, 2.)+pow(ry, 2.)+pow(rz, 2.), 0.5));
+      mu = abs(mu);
       if (dist >= minimum and dist <= maximum){
         if(uselog == true){
           ind = floor((log10(dist) - log10min)/log10dx);
@@ -937,9 +941,7 @@ void get_dr_poly(vector<double> &dr, double minimum, double maximum, int numbins
         else{
           ind = floor((dist - minimum)/dx);
         }
-        mu_ind = floor(mu1/dmu);
-        dr[mu_ind*numbins + ind] = dr[mu_ind*numbins + ind] + 1.;
-        mu_ind = floor(mu2/dmu);
+        mu_ind = floor(mu/dmu);
         dr[mu_ind*numbins + ind] = dr[mu_ind*numbins + ind] + 1.;
       }
     }
@@ -980,7 +982,7 @@ void get_dr_poly_w(vector<double> &dr, double minimum, double maximum, int numbi
   */
   long int ind, mu_ind;
   double dx, log10min, log10max, log10dx, dist, dmu;
-  double mu1, mu2, rx, ry, rz;
+  double mu, rx, ry, rz;
 
   dmu = 1./((float)(mu_bins));
   dx = (maximum - minimum)/((float)(numbins));
@@ -994,10 +996,8 @@ void get_dr_poly_w(vector<double> &dr, double minimum, double maximum, int numbi
       rx = x_rand[j]-x_data[i];
       ry = y_rand[j]-y_data[i];
       rz = z_rand[j]-z_data[i];
-      mu1 = (x_data[i]*rx + y_data[i]*ry + z_data[i]*rz)/(pow(pow(x_data[i], 2.)+pow(y_data[i], 2.)+pow(z_data[i], 2.), 0.5)*pow(pow(rx, 2.)+pow(ry, 2.)+pow(rz, 2.), 0.5));
-      mu2 = (x_rand[j]*rx + y_rand[j]*ry + z_rand[j]*rz)/(pow(pow(x_rand[j], 2.)+pow(y_rand[j], 2.)+pow(z_rand[j], 2.), 0.5)*pow(pow(rx, 2.)+pow(ry, 2.)+pow(rz, 2.), 0.5));
-      mu1 = abs(mu1);
-      mu2 = abs(mu2);
+      mu = (x_data[i]*rx + y_data[i]*ry + z_data[i]*rz)/(pow(pow(x_data[i], 2.)+pow(y_data[i], 2.)+pow(z_data[i], 2.), 0.5)*pow(pow(rx, 2.)+pow(ry, 2.)+pow(rz, 2.), 0.5));
+      mu = abs(mu);
       if (dist >= minimum and dist <= maximum){
         if(uselog == true){
           ind = floor((log10(dist) - log10min)/log10dx);
@@ -1005,9 +1005,7 @@ void get_dr_poly_w(vector<double> &dr, double minimum, double maximum, int numbi
         else{
           ind = floor((dist - minimum)/dx);
         }
-        mu_ind = floor(mu1/dmu);
-        dr[mu_ind*numbins + ind] = dr[mu_ind*numbins + ind] + w_data[i]*w_rand[j];
-        mu_ind = floor(mu2/dmu);
+        mu_ind = floor(mu/dmu);
         dr[mu_ind*numbins + ind] = dr[mu_ind*numbins + ind] + w_data[i]*w_rand[j];
       }
     }
@@ -2005,6 +2003,9 @@ void get_mpi_dd_poly(vector<double> &dd, double minimum, double maximum, int num
       ry = y[j]-y[i];
       rz = z[j]-z[i];
       mu1 = (x[i]*rx + y[i]*ry + z[i]*rz)/(pow(pow(x[i], 2.)+pow(y[i], 2.)+pow(z[i], 2.), 0.5)*pow(pow(rx, 2.)+pow(ry, 2.)+pow(rz, 2.), 0.5));
+      rx = x[i]-x[j];
+      ry = y[i]-y[j];
+      rz = z[i]-z[j];
       mu2 = (x[j]*rx + y[j]*ry + z[j]*rz)/(pow(pow(x[j], 2.)+pow(y[j], 2.)+pow(z[j], 2.), 0.5)*pow(pow(rx, 2.)+pow(ry, 2.)+pow(rz, 2.), 0.5));
       mu1 = abs(mu1);
       mu2 = abs(mu2);
@@ -2110,6 +2111,9 @@ void get_mpi_dd_poly_w(vector<double> &dd, double minimum, double maximum, int n
       ry = y[j]-y[i];
       rz = z[j]-z[i];
       mu1 = (x[i]*rx + y[i]*ry + z[i]*rz)/(pow(pow(x[i], 2.)+pow(y[i], 2.)+pow(z[i], 2.), 0.5)*pow(pow(rx, 2.)+pow(ry, 2.)+pow(rz, 2.), 0.5));
+      rx = x[i]-x[j];
+      ry = y[i]-y[j];
+      rz = z[i]-z[j];
       mu2 = (x[j]*rx + y[j]*ry + z[j]*rz)/(pow(pow(x[j], 2.)+pow(y[j], 2.)+pow(z[j], 2.), 0.5)*pow(pow(rx, 2.)+pow(ry, 2.)+pow(rz, 2.), 0.5));
       mu1 = abs(mu1);
       mu2 = abs(mu2);
@@ -2166,7 +2170,7 @@ void get_mpi_dr_poly(vector<double> &dr, double minimum, double maximum, int num
   */
   long int ind, mu_ind;
   double dx, log10min, log10max, log10dx, dist, dmu;
-  double mu1, mu2, rx, ry, rz;
+  double mu, rx, ry, rz;
 
   dmu = 1./((float)(mu_bins));
   dx = (maximum - minimum)/((float)(numbins));
@@ -2180,10 +2184,8 @@ void get_mpi_dr_poly(vector<double> &dr, double minimum, double maximum, int num
       rx = x_data[j]-x_rand[i];
       ry = y_data[j]-y_rand[i];
       rz = z_data[j]-z_rand[i];
-      mu1 = (x_data[i]*rx + y_data[i]*ry + z_data[i]*rz)/(pow(pow(x_data[i], 2.)+pow(y_data[i], 2.)+pow(z_data[i], 2.), 0.5)*pow(pow(rx, 2.)+pow(ry, 2.)+pow(rz, 2.), 0.5));
-      mu2 = (x_rand[j]*rx + y_rand[j]*ry + z_rand[j]*rz)/(pow(pow(x_rand[j], 2.)+pow(y_rand[j], 2.)+pow(z_rand[j], 2.), 0.5)*pow(pow(rx, 2.)+pow(ry, 2.)+pow(rz, 2.), 0.5));
-      mu1 = abs(mu1);
-      mu2 = abs(mu2);
+      mu = (x_data[i]*rx + y_data[i]*ry + z_data[i]*rz)/(pow(pow(x_data[i], 2.)+pow(y_data[i], 2.)+pow(z_data[i], 2.), 0.5)*pow(pow(rx, 2.)+pow(ry, 2.)+pow(rz, 2.), 0.5));
+      mu = abs(mu);
       if (dist >= minimum and dist <= maximum){
         if(uselog == true){
           ind = floor((log10(dist) - log10min)/log10dx);
@@ -2191,9 +2193,7 @@ void get_mpi_dr_poly(vector<double> &dr, double minimum, double maximum, int num
         else{
           ind = floor((dist - minimum)/dx);
         }
-        mu_ind = floor(mu1/dmu);
-        dr[mu_ind*numbins + ind] = dr[mu_ind*numbins + ind] + 1.;
-        mu_ind = floor(mu2/dmu);
+        mu_ind = floor(mu/dmu);
         dr[mu_ind*numbins + ind] = dr[mu_ind*numbins + ind] + 1.;
       }
     }
@@ -2238,7 +2238,7 @@ void get_mpi_dr_poly_w(vector<double> &dr, double minimum, double maximum, int n
   */
   long int ind, mu_ind;
   double dx, log10min, log10max, log10dx, dist, dmu;
-  double mu1, mu2, rx, ry, rz;
+  double mu, rx, ry, rz;
 
   dmu = 1./((float)(mu_bins));
   dx = (maximum - minimum)/((float)(numbins));
@@ -2252,10 +2252,8 @@ void get_mpi_dr_poly_w(vector<double> &dr, double minimum, double maximum, int n
       rx = x_data[j]-x_rand[i];
       ry = y_data[j]-y_rand[i];
       rz = z_data[j]-z_rand[i];
-      mu1 = (x_data[i]*rx + y_data[i]*ry + z_data[i]*rz)/(pow(pow(x_data[i], 2.)+pow(y_data[i], 2.)+pow(z_data[i], 2.), 0.5)*pow(pow(rx, 2.)+pow(ry, 2.)+pow(rz, 2.), 0.5));
-      mu2 = (x_rand[j]*rx + y_rand[j]*ry + z_rand[j]*rz)/(pow(pow(x_rand[j], 2.)+pow(y_rand[j], 2.)+pow(z_rand[j], 2.), 0.5)*pow(pow(rx, 2.)+pow(ry, 2.)+pow(rz, 2.), 0.5));
-      mu1 = abs(mu1);
-      mu2 = abs(mu2);
+      mu = (x_data[i]*rx + y_data[i]*ry + z_data[i]*rz)/(pow(pow(x_data[i], 2.)+pow(y_data[i], 2.)+pow(z_data[i], 2.), 0.5)*pow(pow(rx, 2.)+pow(ry, 2.)+pow(rz, 2.), 0.5));
+      mu = abs(mu);
       if (dist >= minimum and dist <= maximum){
         if(uselog == true){
           ind = floor((log10(dist) - log10min)/log10dx);
@@ -2263,9 +2261,7 @@ void get_mpi_dr_poly_w(vector<double> &dr, double minimum, double maximum, int n
         else{
           ind = floor((dist - minimum)/dx);
         }
-        mu_ind = floor(mu1/dmu);
-        dr[mu_ind*numbins + ind] = dr[mu_ind*numbins + ind] + w_data[i]*w_rand[j];
-        mu_ind = floor(mu2/dmu);
+        mu_ind = floor(mu/dmu);
         dr[mu_ind*numbins + ind] = dr[mu_ind*numbins + ind] + w_data[i]*w_rand[j];
       }
     }
