@@ -150,7 +150,7 @@ class TwoPoint:
 
     def run(self, output_fname, location='home', processors=4, outmultipole=False):
         if outmultipole is True:
-            self.mode = "poly"
+            self.mode_data = "poly"
         if self.mode_data is not None:
             if self.identifier is None:
                 data_fname = self.path + "temp_data.txt"
