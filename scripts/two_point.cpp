@@ -148,15 +148,18 @@ int main(int argc, char** argv){
   vector<double>w_data;
 
   if(data_file_found == true){
-    if(mode == "2d" || mode == "3d"){
+    if(mode == "2d" || mode == "3d" || mode == "poly"){
       extract_from_table(pos_data, 0, row_length, x_data);
       extract_from_table(pos_data, 1, row_length, y_data);
       if(mode == "2d" && useweight == true){
         extract_from_table(pos_data, 2, row_length, w_data);
       }
-      if(mode == "3d"){
+      if(mode == "3d" || mode == "poly"){
         extract_from_table(pos_data, 2, row_length, z_data);
         if(mode == "3d" && useweight == true){
+          extract_from_table(pos_data, 3, row_length, w_data);
+        }
+        if(mode == "poly" && useweight == true){
           extract_from_table(pos_data, 3, row_length, w_data);
         }
       }
@@ -191,15 +194,18 @@ int main(int argc, char** argv){
   vector<double>w_rand;
 
   if(data_file_found == true){
-    if(mode == "2d" || mode == "3d"){
+    if(mode == "2d" || mode == "3d" || mode == "poly"){
       extract_from_table(pos_rand, 0, row_length, x_rand);
       extract_from_table(pos_rand, 1, row_length, y_rand);
       if(mode == "2d" && useweight == true){
         extract_from_table(pos_rand, 2, row_length, w_rand);
       }
-      if(mode == "3d"){
+      if(mode == "3d" || mode == "poly"){
         extract_from_table(pos_rand, 2, row_length, z_rand);
         if(mode == "3d" && useweight == true){
+          extract_from_table(pos_rand, 3, row_length, w_rand);
+        }
+        if(mode == "poly" && useweight == true){
           extract_from_table(pos_rand, 3, row_length, w_rand);
         }
       }
@@ -259,7 +265,7 @@ int main(int argc, char** argv){
         get_dd_tomo_w(dd, minimum, maximum, numbins, uselog, phi_data, theta_data, w_data);
       }
     }
-    else if(mode == "3d"){
+    else if(mode == "poly"){
       if(useweight == false){
         get_dd_poly(dd, minimum, maximum, numbins, mu_bins, uselog, x_data, y_data, z_data);
       }

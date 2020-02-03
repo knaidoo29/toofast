@@ -203,15 +203,18 @@ int main(int argc, char** argv){
   vector<double>w_data;
 
   if(data_file_found == true){
-    if(mode == "2d" || mode == "3d"){
+    if(mode == "2d" || mode == "3d" || mode == "poly"){
       extract_from_table(pos_data, 0, row_length, x_data);
       extract_from_table(pos_data, 1, row_length, y_data);
       if(mode == "2d" && useweight == true){
         extract_from_table(pos_data, 2, row_length, w_data);
       }
-      if(mode == "3d"){
+      if(mode == "3d" || mode == "poly"){
         extract_from_table(pos_data, 2, row_length, z_data);
         if(mode == "3d" && useweight == true){
+          extract_from_table(pos_data, 3, row_length, w_data);
+        }
+        if(mode == "poly" && useweight == true){
           extract_from_table(pos_data, 3, row_length, w_data);
         }
       }
@@ -250,15 +253,18 @@ int main(int argc, char** argv){
   vector<double>w_rand;
 
   if(data_file_found == true){
-    if(mode == "2d" || mode == "3d"){
+    if(mode == "2d" || mode == "3d" || mode == "poly"){
       extract_from_table(pos_rand, 0, row_length, x_rand);
       extract_from_table(pos_rand, 1, row_length, y_rand);
       if(mode == "2d" && useweight == true){
         extract_from_table(pos_rand, 2, row_length, w_rand);
       }
-      if(mode == "3d"){
+      if(mode == "3d" || mode == "poly"){
         extract_from_table(pos_rand, 2, row_length, z_rand);
         if(mode == "3d" && useweight == true){
+          extract_from_table(pos_rand, 3, row_length, w_rand);
+        }
+        if(mode == "poly" && useweight == true){
           extract_from_table(pos_rand, 3, row_length, w_rand);
         }
       }
@@ -301,7 +307,7 @@ int main(int argc, char** argv){
 
   long int total_size_dd, partition_begin_dd, partition_end_dd;
 
-  if(mode == "2d" || mode == "3d"){
+  if(mode == "2d" || mode == "3d" || mode == "poly"){
     if(x_data.size() % 2 == 0){
       total_size_dd = (x_data.size()/2)*(x_data.size()-1);
     }
@@ -406,7 +412,7 @@ int main(int argc, char** argv){
 
   long int partition_begin_dr, partition_end_dr;
 
-  if(mode == "2d" || mode == "3d"){
+  if(mode == "2d" || mode == "3d" || mode == "poly"){
     partition(x_data.size(), processors, &myid, &partition_begin_dr, &partition_end_dr);
   }
   else if(mode == "tomo"){
@@ -444,7 +450,7 @@ int main(int argc, char** argv){
           phi_rand, theta_rand, w_data, w_rand, &partition_begin_dr, &partition_end_dr, &prefix);
       }
     }
-    else if(mode == "3d"){
+    else if(mode == "poly"){
       if(useweight == false){
         get_mpi_dr_poly(dr, minimum, maximum, numbins, mu_bins, uselog, x_data, y_data, z_data,
           x_rand, y_rand, z_rand, &partition_begin_dr, &partition_end_dr, &prefix);
@@ -479,7 +485,7 @@ int main(int argc, char** argv){
 
   long int total_size_rr, partition_begin_rr, partition_end_rr;
 
-  if(mode == "2d" || mode == "3d"){
+  if(mode == "2d" || mode == "3d" || mode == "poly"){
     if(x_rand.size() % 2 == 0){
       total_size_rr = (x_rand.size()/2)*(x_rand.size()-1);
     }
