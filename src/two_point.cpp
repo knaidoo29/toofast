@@ -2181,9 +2181,9 @@ void get_mpi_dr_poly(vector<double> &dr, double minimum, double maximum, int num
   for(long int i = *partition_begin; i < *partition_end; i++){
     for(long int j = 0; j < x_rand.size(); j++){
       dist = get_distance_3d(x_data[i], y_data[i], z_data[i], x_rand[j], y_rand[j], z_rand[j]);
-      rx = x_data[j]-x_rand[i];
-      ry = y_data[j]-y_rand[i];
-      rz = z_data[j]-z_rand[i];
+      rx = x_rand[j]-x_data[i];
+      ry = y_rand[j]-y_data[i];
+      rz = z_rand[j]-z_data[i];
       mu = (x_data[i]*rx + y_data[i]*ry + z_data[i]*rz)/(pow(pow(x_data[i], 2.)+pow(y_data[i], 2.)+pow(z_data[i], 2.), 0.5)*pow(pow(rx, 2.)+pow(ry, 2.)+pow(rz, 2.), 0.5));
       mu = abs(mu);
       if (dist >= minimum and dist <= maximum){
@@ -2249,9 +2249,9 @@ void get_mpi_dr_poly_w(vector<double> &dr, double minimum, double maximum, int n
   for(long int i = *partition_begin; i < *partition_end; i++){
     for(long int j = 0; j < x_rand.size(); j++){
       dist = get_distance_3d(x_data[i], y_data[i], z_data[i], x_rand[j], y_rand[j], z_rand[j]);
-      rx = x_data[j]-x_rand[i];
-      ry = y_data[j]-y_rand[i];
-      rz = z_data[j]-z_rand[i];
+      rx = x_rand[j]-x_data[i];
+      ry = y_rand[j]-y_data[i];
+      rz = z_rand[j]-z_data[i];
       mu = (x_data[i]*rx + y_data[i]*ry + z_data[i]*rz)/(pow(pow(x_data[i], 2.)+pow(y_data[i], 2.)+pow(z_data[i], 2.), 0.5)*pow(pow(rx, 2.)+pow(ry, 2.)+pow(rz, 2.), 0.5));
       mu = abs(mu);
       if (dist >= minimum and dist <= maximum){
